@@ -894,7 +894,7 @@ function drawTimeline() {
     tr.phases.forEach(ph => {
       const x1 = xd(ph.s), x2 = xd(ph.e), pw = Math.max(x2-x1,2);
       s += `<rect x="${x1}" y="${y+1}" width="${pw}" height="${tH-2}" rx="3" fill="${ph.bg}" stroke="${ph.bc}" stroke-width=".8"/>`;
-      if(pw > 28) s += `<text x="${x1+6}" y="${y+tH/2+3}" font-family="'DM Mono',monospace" font-size="8" fill="rgba(26,26,18,.55)">${ph.tx}</text>`;
+      // Sin texto dentro de las barras — la descripción va abajo en los diamantes
     });
   });
 
