@@ -837,7 +837,7 @@ updateUI();
 function drawTimeline() {
   const el = document.getElementById('timeline-svg');
   if (!el) return;
-  const W = 760, H = 172, padL = 76, padR = 8, padT = 28, padB = 34;
+  const W = 760, H = 185, padL = 76, padR = 8, padT = 28, padB = 42;
   const cW = W - padL - padR, cH = H - padT - padB;
   const start = new Date(2026,3,14), end = new Date(2026,9,15);  // Apr 14 → Oct 15
   const span = end - start;
@@ -894,19 +894,22 @@ function drawTimeline() {
     });
   });
 
-  // Milestones row
-  const msY = padT + tracks.length*(tH+tGap) + 6;
-  milestones.forEach(ms => {
+  // Milestones row — alternamos arriba/abajo para evitar superposición
+  const msY = padT + tracks.length*(tH+tGap) + 8;
+  milestones.forEach((ms, mi) => {
     const x = xd(ms.d);
-    const op = ms.done ? '1' : '.65';
-    // Done = filled diamond; pending = outline diamond
+    const op = ms.done ? '1' : '.7';
+    const above = mi % 2 === 0; // pares arriba, impares abajo
     if (ms.done) {
       s += `<polygon points="${x},${msY-6} ${x+6},${msY} ${x},${msY+6} ${x-6},${msY}" fill="${ms.c}"/>`;
-      s += `<text x="${x}" y="${msY-9}" font-family="'DM Mono',monospace" font-size="7" fill="${ms.c}" text-anchor="middle">✓</text>`;
     } else {
       s += `<polygon points="${x},${msY-5} ${x+5},${msY} ${x},${msY+5} ${x-5},${msY}" fill="none" stroke="${ms.c}" stroke-width="1.5" opacity="${op}"/>`;
     }
-    s += `<text x="${x}" y="${msY+17}" font-family="'DM Mono',monospace" font-size="8" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}</text>`;
+    // Línea vertical corta hacia la etiqueta
+    const lineEnd = above ? msY - 7 : msY + 7;
+    const lblY    = above ? msY - 18 : msY + 18;
+    s += `<line x1="${x}" y1="${lineEnd}" x2="${x}" y2="${above ? msY-12 : msY+12}" stroke="${ms.c}" stroke-width=".8" opacity="${op}"/>`;
+    s += `<text x="${x}" y="${lblY}" font-family="'DM Mono',monospace" font-size="8" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}${ms.done?' ✓':''}</text>`;
   });
 
   // Today line
@@ -922,7 +925,7 @@ function drawTimeline() {
 function drawBurndown() {
   const el = document.getElementById('burndown-svg');
   if (!el) return;
-  const W = 760, H = 170, padL = 42, padR = 12, padT = 12, padB = 36;
+  const W = 760, H = 170, padL = 42, padR = 12, padT = 12, padB = 44;
   const cW = W - padL - padR, cH = H - padT - padB;
 
   // Sprints semanales mapeados a milestones reales (Linear)
@@ -931,15 +934,16 @@ function drawBurndown() {
   const sprints = 20;
   const total   = 240;
 
-  // Milestone markers con fechas reales
+  // Milestone markers — etiquetas escalonadas (arriba/abajo) para los cercanos
+  // row: 0 = abajo normal, 1 = abajo desplazado, 2 = abajo más desplazado
   const markers = [
-    { sp:1,  lbl:'Carga datos\nApr 24',   c:'#8B6914' },
-    { sp:2,  lbl:'Análisis\nApr 30',      c:'#8B6914' },
-    { sp:3,  lbl:'Datos cruzados\nMay 8', c:'#1A3A5E' },
-    { sp:4,  lbl:'Prueba\nMay 11',        c:'#1A3A5E' },
-    { sp:5,  lbl:'EAR\nMay 15',           c:'#2A5E3A' },
-    { sp:16, lbl:'v1.0',                  c:'#2A5E3A' },
-    { sp:20, lbl:'Congreso',              c:'#2A5E3A' },
+    { sp:1,  lbl:'Carga datos', date:'Apr 24', c:'#8B6914', row:0 },
+    { sp:2,  lbl:'Análisis',   date:'Apr 30', c:'#8B6914', row:1 },
+    { sp:3,  lbl:'Cruzados',   date:'May 8',  c:'#1A3A5E', row:0 },
+    { sp:4,  lbl:'Prueba',     date:'May 11', c:'#1A3A5E', row:2 },
+    { sp:5,  lbl:'EAR',        date:'May 15', c:'#2A5E3A', row:1 },
+    { sp:16, lbl:'v1.0',       date:'',       c:'#2A5E3A', row:0 },
+    { sp:20, lbl:'Congreso',   date:'',       c:'#2A5E3A', row:0 },
   ];
 
   // Hoy: Apr 20 = S0 + 3 días ≈ sprint 0 (recibir data 100% completado)
@@ -968,14 +972,13 @@ function drawBurndown() {
     s += `<text x="${x}" y="${H-padB+13}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.25)" text-anchor="middle">S${sp}</text>`;
   });
 
-  // Milestone markers con fechas reales
+  // Milestone markers — etiquetas escalonadas
   markers.forEach(v => {
-    const x = xp(v.sp);
-    const lines = v.lbl.split('\n');
+    const x  = xp(v.sp);
+    const dy = v.row * 11; // desplazamiento vertical por fila
     s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="${v.c}" stroke-width="1" stroke-opacity=".2" stroke-dasharray="3,2"/>`;
-    lines.forEach((ln, li) => {
-      s += `<text x="${x}" y="${H-padB+14+li*10}" font-family="'DM Mono',monospace" font-size="7.5" fill="${v.c}" text-anchor="middle" opacity=".8">${ln}</text>`;
-    });
+    s += `<text x="${x}" y="${H-padB+12+dy}" font-family="'DM Mono',monospace" font-size="8" fill="${v.c}" text-anchor="middle" opacity=".85">${v.lbl}</text>`;
+    if (v.date) s += `<text x="${x}" y="${H-padB+21+dy}" font-family="'DM Mono',monospace" font-size="7" fill="${v.c}" text-anchor="middle" opacity=".55">${v.date}</text>`;
   });
 
   // Ideal line (dashed)
