@@ -861,15 +861,13 @@ function drawTimeline() {
       { s:new Date(2026,6,1),  e:new Date(2026,9,15), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',  tx:'Integración' },
     ]},
   ];
-  // Milestones reales del proyecto (Linear)
+  // Hitos principales del proyecto (detalle semanal → burndown chart)
   const milestones = [
-    { d:new Date(2026,3,17), lbl:'Recibir data', c:'#2A5E3A', done:true  },  // Apr 17 ✓ 100%
-    { d:new Date(2026,3,24), lbl:'Carga datos',  c:'#8B6914', done:false },  // Apr 24
-    { d:new Date(2026,3,30), lbl:'Análisis',     c:'#8B6914', done:false },  // Apr 30
-    { d:new Date(2026,4,8),  lbl:'Datos cruzados',c:'#1A3A5E',done:false },  // May 8
-    { d:new Date(2026,4,11), lbl:'Prueba interna',c:'#1A3A5E',done:false },  // May 11
-    { d:new Date(2026,4,15), lbl:'EAR',          c:'#2A5E3A', done:false },  // May 15
-    { d:new Date(2026,8,1),  lbl:'Congreso',     c:'#2A5E3A', done:false },  // Sep 1
+    { d:new Date(2026,3,17), lbl:'Recibir data ✓', c:'#2A5E3A', done:true  },  // Apr 17 ✓
+    { d:new Date(2026,4,15), lbl:'EAR',             c:'#1A3A5E', done:false },  // May 15
+    { d:new Date(2026,5,20), lbl:'Piloto Campillo', c:'#8B6914', done:false },  // Jun 20
+    { d:new Date(2026,7,10), lbl:'v1.0 LIVE',       c:'#2A5E3A', done:false },  // Aug 10
+    { d:new Date(2026,8,1),  lbl:'Congreso',        c:'#2A5E3A', done:false },  // Sep 1
   ];
 
   const tH = 28, tGap = 7;
@@ -936,14 +934,15 @@ function drawBurndown() {
 
   // Milestone markers — etiquetas escalonadas (arriba/abajo) para los cercanos
   // row: 0 = abajo normal, 1 = abajo desplazado, 2 = abajo más desplazado
+  // Sprints semanales: S0=Apr17, S1=Apr24, S2=Apr30, S3=May8, S4=May11, S5=May15
   const markers = [
-    { sp:1,  lbl:'Carga datos', date:'Apr 24', c:'#8B6914', row:0 },
-    { sp:2,  lbl:'Análisis',   date:'Apr 30', c:'#8B6914', row:1 },
-    { sp:3,  lbl:'Cruzados',   date:'May 8',  c:'#1A3A5E', row:0 },
-    { sp:4,  lbl:'Prueba',     date:'May 11', c:'#1A3A5E', row:2 },
-    { sp:5,  lbl:'EAR',        date:'May 15', c:'#2A5E3A', row:1 },
-    { sp:16, lbl:'v1.0',       date:'',       c:'#2A5E3A', row:0 },
-    { sp:20, lbl:'Congreso',   date:'',       c:'#2A5E3A', row:0 },
+    { sp:1,  lbl:'Carga datos', date:'Apr 24', c:'#8B6914', row:1 },
+    { sp:2,  lbl:'Análisis',    date:'Apr 30', c:'#8B6914', row:0 },
+    { sp:3,  lbl:'Cruzados',    date:'May 8',  c:'#1A3A5E', row:2 },
+    { sp:4,  lbl:'Prueba',      date:'May 11', c:'#1A3A5E', row:1 },
+    { sp:5,  lbl:'EAR',         date:'May 15', c:'#2A5E3A', row:0 },
+    { sp:16, lbl:'v1.0',        date:'ago',    c:'#2A5E3A', row:0 },
+    { sp:20, lbl:'Congreso',    date:'sep',    c:'#2A5E3A', row:0 },
   ];
 
   // Hoy: Apr 20 = S0 + 3 días ≈ sprint 0 (recibir data 100% completado)
