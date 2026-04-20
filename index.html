@@ -839,35 +839,37 @@ function drawTimeline() {
   if (!el) return;
   const W = 760, H = 172, padL = 76, padR = 8, padT = 28, padB = 34;
   const cW = W - padL - padR, cH = H - padT - padB;
-  const start = new Date(2026,3,21), end = new Date(2026,10,10);
+  const start = new Date(2026,3,14), end = new Date(2026,9,15);  // Apr 14 → Oct 15
   const span = end - start;
   function xd(d){ return padL + ((d - start)/span)*cW; }
 
-  const months = [[4,1,'May'],[5,1,'Jun'],[6,1,'Jul'],[7,1,'Ago'],[8,1,'Sep'],[9,1,'Oct'],[10,1,'Nov']];
+  const months = [[3,14,'Abr'],[4,1,'May'],[5,1,'Jun'],[6,1,'Jul'],[7,1,'Ago'],[8,1,'Sep'],[9,1,'Oct']];
   const tracks = [
     { lbl:'DataSet', phases:[
-      { s:new Date(2026,3,21), e:new Date(2026,4,5),  bg:'#F5E9C8', bc:'rgba(139,105,20,.45)', tx:'v0.1 Alpha' },
-      { s:new Date(2026,4,5),  e:new Date(2026,5,16), bg:'#D0DDF5', bc:'rgba(26,58,94,.4)',   tx:'v0.5 UAT' },
-      { s:new Date(2026,5,16), e:new Date(2026,7,11), bg:'#C8DDB0', bc:'rgba(42,94,58,.45)',  tx:'v1.0 LIVE' },
-      { s:new Date(2026,7,11), e:new Date(2026,10,3), bg:'#EBF3E0', bc:'rgba(42,94,58,.3)',   tx:'v1.5+' },
+      { s:new Date(2026,3,14), e:new Date(2026,4,15), bg:'#F5E9C8', bc:'rgba(139,105,20,.45)', tx:'Carga & Análisis' },
+      { s:new Date(2026,4,15), e:new Date(2026,5,20), bg:'#D0DDF5', bc:'rgba(26,58,94,.4)',   tx:'v0.5 UAT' },
+      { s:new Date(2026,5,20), e:new Date(2026,7,15), bg:'#C8DDB0', bc:'rgba(42,94,58,.45)',  tx:'v1.0 LIVE' },
+      { s:new Date(2026,7,15), e:new Date(2026,9,15), bg:'#EBF3E0', bc:'rgba(42,94,58,.3)',   tx:'v1.5+' },
     ]},
     { lbl:'CaminoAR', phases:[
-      { s:new Date(2026,3,21), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',   tx:'Relevamiento' },
-      { s:new Date(2026,4,20), e:new Date(2026,5,16), bg:'#F5E9C8', bc:'rgba(139,105,20,.4)', tx:'DEV' },
-      { s:new Date(2026,5,16), e:new Date(2026,10,3), bg:'#C8DDB0', bc:'rgba(42,94,58,.4)',   tx:'Integrado' },
+      { s:new Date(2026,3,14), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',   tx:'Relevamiento' },
+      { s:new Date(2026,4,20), e:new Date(2026,5,20), bg:'#F5E9C8', bc:'rgba(139,105,20,.4)', tx:'DEV' },
+      { s:new Date(2026,5,20), e:new Date(2026,9,15), bg:'#C8DDB0', bc:'rgba(42,94,58,.4)',   tx:'Integrado' },
     ]},
     { lbl:'ENVAA', phases:[
-      { s:new Date(2026,3,21), e:new Date(2026,6,1),  bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',   tx:'Estándar' },
-      { s:new Date(2026,6,1),  e:new Date(2026,10,3), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',  tx:'Integración' },
+      { s:new Date(2026,3,14), e:new Date(2026,6,1),  bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',   tx:'Estándar' },
+      { s:new Date(2026,6,1),  e:new Date(2026,9,15), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',  tx:'Integración' },
     ]},
   ];
+  // Milestones reales del proyecto (Linear)
   const milestones = [
-    { d:new Date(2026,3,21), lbl:'Kickoff',  c:'#1A1A12' },
-    { d:new Date(2026,4,5),  lbl:'v0.1',     c:'#8B6914' },
-    { d:new Date(2026,5,16), lbl:'Campillo', c:'#1A3A5E' },
-    { d:new Date(2026,7,11), lbl:'EAR',      c:'#2A5E3A' },
-    { d:new Date(2026,8,14), lbl:'Webinar',  c:'#2A5E3A' },
-    { d:new Date(2026,10,3), lbl:'Congreso', c:'#2A5E3A' },
+    { d:new Date(2026,3,17), lbl:'Recibir data', c:'#2A5E3A', done:true  },  // Apr 17 ✓ 100%
+    { d:new Date(2026,3,24), lbl:'Carga datos',  c:'#8B6914', done:false },  // Apr 24
+    { d:new Date(2026,3,30), lbl:'Análisis',     c:'#8B6914', done:false },  // Apr 30
+    { d:new Date(2026,4,8),  lbl:'Datos cruzados',c:'#1A3A5E',done:false },  // May 8
+    { d:new Date(2026,4,11), lbl:'Prueba interna',c:'#1A3A5E',done:false },  // May 11
+    { d:new Date(2026,4,15), lbl:'EAR',          c:'#2A5E3A', done:false },  // May 15
+    { d:new Date(2026,8,1),  lbl:'Congreso',     c:'#2A5E3A', done:false },  // Sep 1
   ];
 
   const tH = 28, tGap = 7;
@@ -896,8 +898,15 @@ function drawTimeline() {
   const msY = padT + tracks.length*(tH+tGap) + 6;
   milestones.forEach(ms => {
     const x = xd(ms.d);
-    s += `<polygon points="${x},${msY-5} ${x+5},${msY} ${x},${msY+5} ${x-5},${msY}" fill="${ms.c}" opacity=".7"/>`;
-    s += `<text x="${x}" y="${msY+16}" font-family="'DM Mono',monospace" font-size="8" fill="${ms.c}" text-anchor="middle" opacity=".7">${ms.lbl}</text>`;
+    const op = ms.done ? '1' : '.65';
+    // Done = filled diamond; pending = outline diamond
+    if (ms.done) {
+      s += `<polygon points="${x},${msY-6} ${x+6},${msY} ${x},${msY+6} ${x-6},${msY}" fill="${ms.c}"/>`;
+      s += `<text x="${x}" y="${msY-9}" font-family="'DM Mono',monospace" font-size="7" fill="${ms.c}" text-anchor="middle">✓</text>`;
+    } else {
+      s += `<polygon points="${x},${msY-5} ${x+5},${msY} ${x},${msY+5} ${x-5},${msY}" fill="none" stroke="${ms.c}" stroke-width="1.5" opacity="${op}"/>`;
+    }
+    s += `<text x="${x}" y="${msY+17}" font-family="'DM Mono',monospace" font-size="8" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}</text>`;
   });
 
   // Today line
@@ -915,60 +924,83 @@ function drawBurndown() {
   if (!el) return;
   const W = 760, H = 170, padL = 42, padR = 12, padT = 12, padB = 36;
   const cW = W - padL - padR, cH = H - padT - padB;
-  const total = 240, sprints = 20;
+
+  // Sprints semanales mapeados a milestones reales (Linear)
+  // S0=Apr17, S1=Apr24, S2=Apr30, S3=May8, S4=May11, S5=May15 (EAR)
+  // S6-S20: fases siguientes hasta Congreso (~Oct)
+  const sprints = 20;
+  const total   = 240;
+
+  // Milestone markers con fechas reales
+  const markers = [
+    { sp:1,  lbl:'Carga datos\nApr 24',   c:'#8B6914' },
+    { sp:2,  lbl:'Análisis\nApr 30',      c:'#8B6914' },
+    { sp:3,  lbl:'Datos cruzados\nMay 8', c:'#1A3A5E' },
+    { sp:4,  lbl:'Prueba\nMay 11',        c:'#1A3A5E' },
+    { sp:5,  lbl:'EAR\nMay 15',           c:'#2A5E3A' },
+    { sp:16, lbl:'v1.0',                  c:'#2A5E3A' },
+    { sp:20, lbl:'Congreso',              c:'#2A5E3A' },
+  ];
+
+  // Hoy: Apr 20 = S0 + 3 días ≈ sprint 0 (recibir data 100% completado)
+  const curSpr = 0;
+  const curPts = 221; // 240 - 19 completados (recibir data Aapresid)
 
   const ideal  = Array.from({length:sprints+1}, (_,i) => total - (total/sprints)*i);
-  const actual = [240,232,221,208,196,182,170,159,147,131,119,105,90,77,65,52,40,28,17,7,0];
-  const curSpr = 2;
+  const actual = [240,221]; // solo S0 completado + hoy con 221 restantes
 
   function xp(sp){ return padL + (sp/sprints)*cW; }
   function yp(pt){ return padT + (1 - pt/total)*cH; }
 
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block">`;
 
-  // Grid
+  // Grid horizontal
   [0,60,120,180,240].forEach(pt => {
     const y = yp(pt);
     s += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="rgba(26,26,18,.07)" stroke-width="1"/>`;
     s += `<text x="${padL-6}" y="${y+4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" text-anchor="end">${pt}</text>`;
   });
+
+  // Grid vertical cada 4 sprints
   [0,4,8,12,16,20].forEach(sp => {
     const x = xp(sp);
     s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="rgba(26,26,18,.06)" stroke-width="1"/>`;
-    s += `<text x="${x}" y="${H-padB+13}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" text-anchor="middle">S${sp}</text>`;
+    s += `<text x="${x}" y="${H-padB+13}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.25)" text-anchor="middle">S${sp}</text>`;
   });
 
-  // Version markers
-  [{sp:2,lbl:'v0.1',c:'#8B6914'},{sp:8,lbl:'v0.5',c:'#1A3A5E'},{sp:16,lbl:'v1.0',c:'#2A5E3A'},{sp:20,lbl:'v1.5',c:'#2A5E3A'}].forEach(v => {
+  // Milestone markers con fechas reales
+  markers.forEach(v => {
     const x = xp(v.sp);
+    const lines = v.lbl.split('\n');
     s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="${v.c}" stroke-width="1" stroke-opacity=".2" stroke-dasharray="3,2"/>`;
-    s += `<text x="${x}" y="${H-padB+25}" font-family="'DM Mono',monospace" font-size="8" fill="${v.c}" text-anchor="middle" opacity=".75">${v.lbl}</text>`;
+    lines.forEach((ln, li) => {
+      s += `<text x="${x}" y="${H-padB+14+li*10}" font-family="'DM Mono',monospace" font-size="7.5" fill="${v.c}" text-anchor="middle" opacity=".8">${ln}</text>`;
+    });
   });
 
-  // Ideal line
+  // Ideal line (dashed)
   const iPath = ideal.map((pt,i) => `${i===0?'M':'L'}${xp(i).toFixed(1)},${yp(pt).toFixed(1)}`).join(' ');
   s += `<path d="${iPath}" fill="none" stroke="rgba(26,26,18,.18)" stroke-width="1.5" stroke-dasharray="5,4"/>`;
 
-  // Actual line (up to curSpr)
-  const aShown = actual.slice(0, curSpr+1);
-  const aPath  = aShown.map((pt,i) => `${i===0?'M':'L'}${xp(i).toFixed(1)},${yp(pt).toFixed(1)}`).join(' ');
+  // Actual line (solo hasta hoy: S0)
+  const aPath = `M${xp(0).toFixed(1)},${yp(240).toFixed(1)} L${xp(curSpr).toFixed(1)},${yp(curPts).toFixed(1)}`;
   s += `<path d="${aPath} L${xp(curSpr).toFixed(1)},${H-padB} L${padL},${H-padB} Z" fill="rgba(42,94,58,.07)"/>`;
   s += `<path d="${aPath}" fill="none" stroke="#2A5E3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
 
-  // Future projection (dashed green)
-  const velocity = (total - actual[curSpr]) / (sprints - curSpr);
+  // Proyección desde hoy hasta S20
+  const velocity = (curPts) / (sprints - curSpr);
   const projPath = Array.from({length: sprints - curSpr + 1}, (_,i) => {
-    const sp = curSpr + i, pt = Math.max(0, actual[curSpr] - velocity*i);
+    const sp = curSpr + i, pt = Math.max(0, curPts - velocity*i);
     return `${i===0?'M':'L'}${xp(sp).toFixed(1)},${yp(pt).toFixed(1)}`;
   }).join(' ');
-  s += `<path d="${projPath}" fill="none" stroke="#2A5E3A" stroke-width="1.5" stroke-dasharray="4,3" opacity=".4"/>`;
+  s += `<path d="${projPath}" fill="none" stroke="#2A5E3A" stroke-width="1.5" stroke-dasharray="4,3" opacity=".35"/>`;
 
-  // Current point
-  const cx = xp(curSpr), cy = yp(actual[curSpr]);
+  // Punto hoy
+  const cx = xp(curSpr), cy = yp(curPts);
   s += `<circle cx="${cx}" cy="${cy}" r="5" fill="#2A5E3A" stroke="white" stroke-width="2"/>`;
-  s += `<text x="${cx+9}" y="${cy-7}" font-family="'DM Mono',monospace" font-size="9" fill="#2A5E3A">Hoy · ${actual[curSpr]} pts</text>`;
+  s += `<text x="${cx+9}" y="${cy-7}" font-family="'DM Mono',monospace" font-size="9" fill="#2A5E3A">Hoy (Apr 20) · ${curPts} pts</text>`;
 
-  // Legend
+  // Leyenda
   s += `<line x1="${padL}" y1="8" x2="${padL+18}" y2="8" stroke="rgba(26,26,18,.25)" stroke-width="1.5" stroke-dasharray="5,4"/>`;
   s += `<text x="${padL+22}" y="12" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.4)">Ideal</text>`;
   s += `<line x1="${padL+58}" y1="8" x2="${padL+76}" y2="8" stroke="#2A5E3A" stroke-width="2"/>`;
