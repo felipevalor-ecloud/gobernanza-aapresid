@@ -863,14 +863,15 @@ function drawTimeline() {
     ]},
   ];
 
-  // Los 6 milestones reales del Linear
+  // Milestones centrados bajo cada fase del track DataSet
+  // Centro de cada barra = (inicio + fin) / 2
   const milestones = [
-    { d:new Date(2026,3,17), lbl:'Recibir data',  date:'Apr 17', c:'#2A5E3A', done:true  },
-    { d:new Date(2026,3,24), lbl:'Carga de datos', date:'Apr 24', c:'#8B6914', done:false },
-    { d:new Date(2026,3,30), lbl:'Análisis',       date:'Apr 30', c:'#8B6914', done:false },
-    { d:new Date(2026,4,8),  lbl:'Datos cruzados', date:'May 8',  c:'#1A3A5E', done:false },
-    { d:new Date(2026,4,11), lbl:'Prueba interna', date:'May 11', c:'#1A3A5E', done:false },
-    { d:new Date(2026,4,15), lbl:'EAR',            date:'May 15', c:'#2A5E3A', done:false },
+    { d:new Date(2026,3,15), lbl:'Recibir data',  date:'Apr 17', c:'#2A5E3A', done:true  }, // centro Apr 14–17
+    { d:new Date(2026,3,20), lbl:'Carga de datos', date:'Apr 24', c:'#8B6914', done:false }, // centro Apr 17–24
+    { d:new Date(2026,3,27), lbl:'Análisis',       date:'Apr 30', c:'#8B6914', done:false }, // centro Apr 24–30
+    { d:new Date(2026,4,4),  lbl:'Datos cruzados', date:'May 8',  c:'#1A3A5E', done:false }, // centro Apr 30–May 8
+    { d:new Date(2026,4,9),  lbl:'Prueba interna', date:'May 11', c:'#1A3A5E', done:false }, // centro May 8–11
+    { d:new Date(2026,4,15), lbl:'EAR',            date:'May 15', c:'#2A5E3A', done:false }, // centro May 11–20
   ];
 
   const tH = 26, tGap = 7;
