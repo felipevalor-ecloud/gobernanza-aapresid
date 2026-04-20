@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -172,6 +173,56 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
 .version-badge{ display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 5px;border-radius:100px;background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:10px;font-weight:500; }
 .version-num{ background:var(--green);color:white;padding:1px 6px;border-radius:100px;font-size:9px;font-weight:700; }
 
+/* LOGIN */
+#login-screen{
+  position:fixed;inset:0;background:var(--ink);z-index:10000;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+#login-screen.hidden{ display:none; }
+.login-box{
+  width:100%;max-width:380px;
+}
+.login-logo{ display:flex;align-items:center;gap:10px;margin-bottom:40px; }
+.login-logo-badge{ width:36px;height:36px;border-radius:9px;background:var(--green);display:flex;align-items:center;justify-content:center; }
+.login-logo-badge svg{ width:20px;height:20px; }
+.login-logo-name{ font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:#fff;letter-spacing:-.02em; }
+.login-logo-sep{ width:1px;height:18px;background:rgba(255,255,255,.15); }
+.login-logo-partner{ font-size:11px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase; }
+.login-title{ font-family:'Fraunces',serif;font-size:clamp(26px,5vw,36px);font-weight:700;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:8px; }
+.login-title em{ font-style:italic;color:#A8CCAA; }
+.login-sub{ font-size:13px;color:rgba(255,255,255,.45);margin-bottom:32px;line-height:1.5; }
+.login-field{ margin-bottom:14px; }
+.login-label{ display:block;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:7px; }
+.login-input{
+  width:100%;padding:12px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;color:#fff;font-size:14px;font-family:'Instrument Sans',sans-serif;
+  outline:none;transition:border-color .2s;
+}
+.login-input:focus{ border-color:rgba(168,204,170,.5); }
+.login-input::placeholder{ color:rgba(255,255,255,.2); }
+.login-btn{
+  width:100%;padding:13px;background:var(--green);border:none;border-radius:10px;
+  color:#fff;font-size:14px;font-weight:600;font-family:'Instrument Sans',sans-serif;
+  cursor:pointer;margin-top:6px;transition:background .2s;
+}
+.login-btn:hover{ background:var(--green-mid); }
+.login-btn:disabled{ opacity:.5;cursor:not-allowed; }
+.login-error{
+  font-size:12px;color:#F4A4A4;font-family:'DM Mono',monospace;
+  letter-spacing:.04em;margin-top:12px;display:none;
+}
+.login-error.show{ display:block; }
+.login-footer{ margin-top:32px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.15);letter-spacing:.08em;text-align:center; }
+
+/* LOGOUT BTN */
+.logout-btn{
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink4);background:none;border:1px solid var(--rule);
+  border-radius:100px;padding:4px 12px;cursor:pointer;transition:all .2s;
+}
+.logout-btn:hover{ color:var(--ink);border-color:var(--rule-strong); }
+
 /* SCROLL */
 .slide-scroll{ overflow-y:auto;max-height:calc(100vh - clamp(140px,20vh,210px));padding-right:4px;width:100%; }
 .slide-scroll::-webkit-scrollbar{ width:2px }
@@ -190,6 +241,33 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
 </style>
 </head>
 <body>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-badge">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" opacity=".5"/><path d="M10 4C10 4 14 6.5 14 10C14 13.5 10 16 10 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="2" fill="white"/></svg>
+      </div>
+      <span class="login-logo-name">ecloud</span>
+      <div class="login-logo-sep"></div>
+      <span class="login-logo-partner">Aapresid</span>
+    </div>
+    <h1 class="login-title">Gobernanza<br><em>2026</em></h1>
+    <p class="login-sub">Documento confidencial. Ingresá con tu cuenta autorizada.</p>
+    <div class="login-field">
+      <label class="login-label" for="login-email">Email</label>
+      <input class="login-input" type="email" id="login-email" placeholder="tu@email.com" autocomplete="email" />
+    </div>
+    <div class="login-field">
+      <label class="login-label" for="login-password">Contraseña</label>
+      <input class="login-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="login-btn" id="login-btn" onclick="handleLogin()">Ingresar →</button>
+    <p class="login-error" id="login-error"></p>
+    <p class="login-footer">DOCUMENTO CONFIDENCIAL — ABRIL 2026</p>
+  </div>
+</div>
+
 <div class="grain"></div>
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="ring"></div>
@@ -204,7 +282,10 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
     <div class="logo-sep"></div>
     <span class="logo-partner">Aapresid — Proyecto DataSet</span>
   </div>
-  <span class="slide-label" id="topLabel">Gobernanza</span>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="slide-label" id="topLabel">Gobernanza</span>
+    <button class="logout-btn" id="logout-btn" onclick="handleLogout()" style="display:none">Salir</button>
+  </div>
 </div>
 
 <div class="dots" id="dots"></div>
@@ -592,6 +673,68 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
 </div><!-- /deck -->
 
 <script>
+// ── Supabase Auth ──────────────────────────────────────────────
+const SUPA_URL = 'https://mlexxszeggmddrasggxe.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sZXh4c3plZ2dtZGRyYXNnZ3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDY3NjYsImV4cCI6MjA5MjI4Mjc2Nn0.aBg3Zuz0V7uSeU7CN3AgpCRNR0pHe8dYnhHvoDJhTMs';
+const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+const loginScreen = document.getElementById('login-screen');
+const logoutBtn   = document.getElementById('logout-btn');
+
+function showApp() {
+  loginScreen.classList.add('hidden');
+  logoutBtn.style.display = 'block';
+}
+function showLogin() {
+  loginScreen.classList.remove('hidden');
+  logoutBtn.style.display = 'none';
+}
+
+// Verificar sesión al cargar
+supa.auth.getSession().then(({ data: { session } }) => {
+  if (session) showApp(); else showLogin();
+});
+
+// Escuchar cambios de sesión
+supa.auth.onAuthStateChange((_event, session) => {
+  if (session) showApp(); else showLogin();
+});
+
+async function handleLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn      = document.getElementById('login-btn');
+  const errorEl  = document.getElementById('login-error');
+
+  errorEl.classList.remove('show');
+  btn.disabled = true;
+  btn.textContent = 'Ingresando…';
+
+  const { error } = await supa.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    errorEl.textContent = error.message === 'Invalid login credentials'
+      ? 'Email o contraseña incorrectos.'
+      : error.message;
+    errorEl.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Ingresar →';
+  }
+}
+
+async function handleLogout() {
+  await supa.auth.signOut();
+}
+
+// Enter key en el form
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+});
+document.getElementById('login-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('login-password').focus();
+});
+// ──────────────────────────────────────────────────────────────
+
 const slides = document.querySelectorAll('.slide');
 const dotsEl = document.getElementById('dots');
 const navCount = document.getElementById('navCount');
