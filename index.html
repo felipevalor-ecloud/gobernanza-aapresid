@@ -851,19 +851,15 @@ function drawTimeline() {
     [4,5,'5 May'],   [4,12,'12 May'], [4,19,'19 May'],
   ];
 
-  // Tracks acotados a este período
+  // Solo DataSet — una fase por milestone para consistencia con el Linear
   const tracks = [
     { lbl:'DataSet', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,3,17), bg:'#C8DDB0', bc:'rgba(42,94,58,.5)',   tx:'✓' },           // Recibir data — done
-      { s:new Date(2026,3,17), e:new Date(2026,3,24), bg:'#F5E9C8', bc:'rgba(139,105,20,.5)', tx:'Carga datos' },  // en curso
-      { s:new Date(2026,3,24), e:new Date(2026,4,15), bg:'#EDE9DF', bc:'rgba(26,26,18,.18)',  tx:'Análisis & Consulta' }, // pendiente
-      { s:new Date(2026,4,15), e:new Date(2026,4,20), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',  tx:'EAR prep' },
-    ]},
-    { lbl:'CaminoAR', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.18)', tx:'Relevamiento' },
-    ]},
-    { lbl:'ENVAA', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.18)', tx:'Estándar' },
+      { s:new Date(2026,3,14), e:new Date(2026,3,17), bg:'#C8DDB0', bc:'rgba(42,94,58,.5)',    tx:'Recibir data ✓' }, // 100% done
+      { s:new Date(2026,3,17), e:new Date(2026,3,24), bg:'#F5E9C8', bc:'rgba(139,105,20,.5)',  tx:'Carga de datos' }, // en curso
+      { s:new Date(2026,3,24), e:new Date(2026,3,30), bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',    tx:'Análisis' },       // pendiente
+      { s:new Date(2026,3,30), e:new Date(2026,4,8),  bg:'#EDE9DF', bc:'rgba(26,26,18,.15)',   tx:'Datos cruzados' },
+      { s:new Date(2026,4,8),  e:new Date(2026,4,11), bg:'#EDE9DF', bc:'rgba(26,26,18,.15)',   tx:'Prueba' },
+      { s:new Date(2026,4,11), e:new Date(2026,4,20), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',   tx:'Evento EAR' },
     ]},
   ];
 
