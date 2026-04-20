@@ -837,51 +837,56 @@ updateUI();
 function drawTimeline() {
   const el = document.getElementById('timeline-svg');
   if (!el) return;
-  // Altura aumentada para dar espacio a las etiquetas debajo
   const W = 760, H = 200, padL = 76, padR = 8, padT = 26, padB = 54;
   const cW = W - padL - padR;
-  const start = new Date(2026,3,14), end = new Date(2026,9,15);
-  const span = end - start;
+
+  // Acotado exactamente a los milestones del Linear: Apr 14 → May 20
+  const start = new Date(2026,3,14), end = new Date(2026,4,20);
+  const span  = end - start;
   function xd(d){ return padL + ((d - start)/span)*cW; }
 
-  const months = [[3,14,'Abr'],[4,1,'May'],[5,1,'Jun'],[6,1,'Jul'],[7,1,'Ago'],[8,1,'Sep'],[9,1,'Oct']];
+  // Semanas como eje X
+  const weeks = [
+    [3,14,'14 Abr'], [3,21,'21 Abr'], [3,28,'28 Abr'],
+    [4,5,'5 May'],   [4,12,'12 May'], [4,19,'19 May'],
+  ];
+
+  // Tracks acotados a este período
   const tracks = [
     { lbl:'DataSet', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,4,15), bg:'#F5E9C8', bc:'rgba(139,105,20,.45)', tx:'Carga & Análisis' },
-      { s:new Date(2026,4,15), e:new Date(2026,5,20), bg:'#D0DDF5', bc:'rgba(26,58,94,.4)',    tx:'v0.5 UAT' },
-      { s:new Date(2026,5,20), e:new Date(2026,7,15), bg:'#C8DDB0', bc:'rgba(42,94,58,.45)',   tx:'v1.0 LIVE' },
-      { s:new Date(2026,7,15), e:new Date(2026,9,15), bg:'#EBF3E0', bc:'rgba(42,94,58,.3)',    tx:'v1.5+' },
+      { s:new Date(2026,3,14), e:new Date(2026,3,17), bg:'#C8DDB0', bc:'rgba(42,94,58,.5)',   tx:'✓' },           // Recibir data — done
+      { s:new Date(2026,3,17), e:new Date(2026,3,24), bg:'#F5E9C8', bc:'rgba(139,105,20,.5)', tx:'Carga datos' },  // en curso
+      { s:new Date(2026,3,24), e:new Date(2026,4,15), bg:'#EDE9DF', bc:'rgba(26,26,18,.18)',  tx:'Análisis & Consulta' }, // pendiente
+      { s:new Date(2026,4,15), e:new Date(2026,4,20), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',  tx:'EAR prep' },
     ]},
     { lbl:'CaminoAR', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',    tx:'Relevamiento' },
-      { s:new Date(2026,4,20), e:new Date(2026,5,20), bg:'#F5E9C8', bc:'rgba(139,105,20,.4)',  tx:'DEV' },
-      { s:new Date(2026,5,20), e:new Date(2026,9,15), bg:'#C8DDB0', bc:'rgba(42,94,58,.4)',    tx:'Integrado' },
+      { s:new Date(2026,3,14), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.18)', tx:'Relevamiento' },
     ]},
     { lbl:'ENVAA', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,6,1),  bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',    tx:'Estándar' },
-      { s:new Date(2026,6,1),  e:new Date(2026,9,15), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',   tx:'Integración' },
+      { s:new Date(2026,3,14), e:new Date(2026,4,20), bg:'#EDE9DF', bc:'rgba(26,26,18,.18)', tx:'Estándar' },
     ]},
   ];
-  // 5 hitos principales — todos los labels van DEBAJO del diamante
+
+  // Los 6 milestones reales del Linear
   const milestones = [
-    { d:new Date(2026,3,17), lbl:'Recibir data ✓', c:'#2A5E3A', done:true  },
-    { d:new Date(2026,4,15), lbl:'EAR',             c:'#1A3A5E', done:false },
-    { d:new Date(2026,5,20), lbl:'Piloto Campillo', c:'#8B6914', done:false },
-    { d:new Date(2026,7,10), lbl:'v1.0 LIVE',       c:'#2A5E3A', done:false },
-    { d:new Date(2026,8,1),  lbl:'Congreso',        c:'#2A5E3A', done:false },
+    { d:new Date(2026,3,17), lbl:'Recibir data',  date:'Apr 17', c:'#2A5E3A', done:true  },
+    { d:new Date(2026,3,24), lbl:'Carga de datos', date:'Apr 24', c:'#8B6914', done:false },
+    { d:new Date(2026,3,30), lbl:'Análisis',       date:'Apr 30', c:'#8B6914', done:false },
+    { d:new Date(2026,4,8),  lbl:'Datos cruzados', date:'May 8',  c:'#1A3A5E', done:false },
+    { d:new Date(2026,4,11), lbl:'Prueba interna', date:'May 11', c:'#1A3A5E', done:false },
+    { d:new Date(2026,4,15), lbl:'EAR',            date:'May 15', c:'#2A5E3A', done:false },
   ];
 
   const tH = 26, tGap = 7;
-  const tracksBottom = padT + tracks.length*(tH+tGap); // y donde terminan las barras
-  const msY = tracksBottom + 12; // fila de diamantes
+  const msY = padT + tracks.length*(tH+tGap) + 12;
 
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">`;
 
-  // Month grid
-  months.forEach(([mo,dy,nm]) => {
+  // Grid semanal
+  weeks.forEach(([mo,dy,nm]) => {
     const x = xd(new Date(2026,mo,dy));
     s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${msY+6}" stroke="rgba(26,26,18,.07)" stroke-width="1"/>`;
-    s += `<text x="${x+3}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" letter-spacing=".06em">${nm}</text>`;
+    s += `<text x="${x+3}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" letter-spacing=".04em">${nm}</text>`;
   });
 
   // Tracks
@@ -892,29 +897,30 @@ function drawTimeline() {
     tr.phases.forEach(ph => {
       const x1 = xd(ph.s), x2 = xd(ph.e), pw = Math.max(x2-x1,2);
       s += `<rect x="${x1}" y="${y+1}" width="${pw}" height="${tH-2}" rx="3" fill="${ph.bg}" stroke="${ph.bc}" stroke-width=".8"/>`;
-      if(pw > 32) s += `<text x="${x1+6}" y="${y+tH/2+3}" font-family="'DM Mono',monospace" font-size="8" fill="rgba(26,26,18,.55)">${ph.tx}</text>`;
+      if(pw > 28) s += `<text x="${x1+6}" y="${y+tH/2+3}" font-family="'DM Mono',monospace" font-size="8" fill="rgba(26,26,18,.55)">${ph.tx}</text>`;
     });
   });
 
-  // Hoy line
+  // Hoy line (Apr 20)
   const todayX = xd(new Date(2026,3,20));
   s += `<line x1="${todayX}" y1="${padT}" x2="${todayX}" y2="${msY+6}" stroke="#2A5E3A" stroke-width="1.5" stroke-dasharray="3,2" opacity=".55"/>`;
   s += `<text x="${todayX+3}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="8" fill="#2A5E3A" opacity=".8">Hoy</text>`;
 
-  // Milestones — todos los labels DEBAJO, alternando fila A (y+16) y fila B (y+28)
+  // 6 Milestones — 2 filas alternadas debajo de los diamantes
   milestones.forEach((ms, mi) => {
-    const x = xd(ms.d);
-    const op = ms.done ? '1' : '.72';
-    const rowY = msY + 16 + (mi % 2) * 13; // fila A: +16, fila B: +29
+    const x   = xd(ms.d);
+    const op  = ms.done ? '1' : '.75';
+    const row = mi % 2; // fila 0 = más cerca, fila 1 = más abajo
+    const lblY = msY + 17 + row * 14;
 
     if (ms.done) {
-      s += `<polygon points="${x},${msY-5} ${x+5},${msY} ${x},${msY+5} ${x-5},${msY}" fill="${ms.c}"/>`;
+      s += `<polygon points="${x},${msY-6} ${x+6},${msY} ${x},${msY+6} ${x-6},${msY}" fill="${ms.c}"/>`;
     } else {
       s += `<polygon points="${x},${msY-5} ${x+5},${msY} ${x},${msY+5} ${x-5},${msY}" fill="none" stroke="${ms.c}" stroke-width="1.5" opacity="${op}"/>`;
     }
-    // Tick corto hacia la fila del label
-    s += `<line x1="${x}" y1="${msY+6}" x2="${x}" y2="${rowY-4}" stroke="${ms.c}" stroke-width=".7" opacity="${op}" stroke-dasharray="2,1"/>`;
-    s += `<text x="${x}" y="${rowY}" font-family="'DM Mono',monospace" font-size="8.5" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}</text>`;
+    s += `<line x1="${x}" y1="${msY+6}" x2="${x}" y2="${lblY-5}" stroke="${ms.c}" stroke-width=".7" opacity="${op}" stroke-dasharray="2,1"/>`;
+    s += `<text x="${x}" y="${lblY}" font-family="'DM Mono',monospace" font-size="8.5" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}</text>`;
+    s += `<text x="${x}" y="${lblY+10}" font-family="'DM Mono',monospace" font-size="7.5" fill="${ms.c}" text-anchor="middle" opacity="${+op*.7}">${ms.date}</text>`;
   });
 
   s += '</svg>';
