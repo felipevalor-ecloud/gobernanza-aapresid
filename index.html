@@ -425,13 +425,13 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
         <div class="box" style="border-left:3px solid var(--green)">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v1.0</span> Release</span><span class="tag green">LIVE</span></div>
           <p class="body" style="margin-bottom:6px">Primera versión estable. Acceso público.</p>
-          <div class="module-item">Paneles Productor + ATR completos</div><div class="module-item">CaminoAR integrado · REM</div><div class="module-item">Informes IA v1 · API básica</div>
+          <div class="module-item">Paneles Productor + ATR completos</div><div class="module-item">CaminoAR integrado · REM</div><div class="module-item">Informes IA v1 · API básica</div><div class="module-item">API de clima</div><div class="module-item">RindePlus</div>
           <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: EAR + Webinares</div>
         </div>
         <div class="box" style="border-left:3px solid var(--green)">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v1.5</span> Integraciones</span><span class="tag green">LIVE</span></div>
           <p class="body" style="margin-bottom:6px">Integraciones externas y programas adicionales.</p>
-          <div class="module-item">GeoAgro / Albor / RindePlus / Puma</div><div class="module-item">Inf. Experimental · Carbono · ASC</div>
+          <div class="module-item">Albor / Puma</div><div class="module-item">Inf. Experimental · Carbono · ASC</div>
           <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: Congreso Aapresid</div>
         </div>
         <div class="box" style="border-left:3px solid var(--green)">
@@ -453,11 +453,11 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
 
       <!-- DEV -->
       <div class="env-card dev">
-        <div class="env-header"><div class="env-dot-lg dev"></div><span class="env-lbl dev">DEV</span></div>
+        <div class="env-header"><div class="env-dot-lg dev"></div><span class="env-lbl dev">Staging</span></div>
         <p class="env-desc">Pruebas funcionales del equipo. Datos aleatorios, sin impacto en producción.</p>
         <div class="env-url-block">
           <div class="env-url-lbl">DataSet</div>
-          <a class="env-url" href="https://v0-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-aapresid-dataset.vercel.app</span></a>
+          <a class="env-url" href="https://v0-staging-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-staging-aapresid-dataset.vercel.app</span></a>
         </div>
         <div class="env-url-block">
           <div class="env-url-lbl">CaminoAR</div>
@@ -469,9 +469,12 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
         </div>
         <div class="env-creds">
           <div class="env-creds-title">Credenciales</div>
-          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val ph">por completar</span></div>
-          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val ph">por completar</span></div>
-          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val ph">por completar</span></div>
+          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val">gaspar@nativas.ar</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
+          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val">ren.costamagna@gmail.com</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
+          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val">renzo.costamagna@ecloudsolutions.com</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">12345678</span></div>
         </div>
       </div>
 
@@ -481,7 +484,7 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
         <p class="env-desc">Testing y demos con actores. Datos reales de prueba. Acceso autorizado.</p>
         <div class="env-url-block">
           <div class="env-url-lbl">DataSet</div>
-          <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span class="env-url-text ph">URL por definir</span></div>
+          <a class="env-url" href="https://v0-uat-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-uat-aapresid-dataset.vercel.app</span></a>
         </div>
         <div class="env-url-block">
           <div class="env-url-lbl">CaminoAR</div>
@@ -493,9 +496,10 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
         </div>
         <div class="env-creds">
           <div class="env-creds-title">Credenciales</div>
-          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val ph">por completar</span></div>
-          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val ph">por completar</span></div>
-          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val ph">por completar</span></div>
+          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val">ren.costamagna@gmail.com</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
+          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val">renzo.costamagna+1@ecloudsolutions.com</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
         </div>
       </div>
 
@@ -505,7 +509,7 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
         <p class="env-desc">Acceso público con datos reales de productores. Versión estable validada.</p>
         <div class="env-url-block">
           <div class="env-url-lbl">DataSet</div>
-          <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span class="env-url-text ph">URL por definir</span></div>
+          <a class="env-url" href="https://v0-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-aapresid-dataset.vercel.app</span></a>
         </div>
         <div class="env-url-block">
           <div class="env-url-lbl">CaminoAR</div>
@@ -517,9 +521,12 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
         </div>
         <div class="env-creds">
           <div class="env-creds-title">Credenciales</div>
-          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val ph">por completar</span></div>
-          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val ph">por completar</span></div>
-          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val ph">por completar</span></div>
+          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val">gaspar@nativas.ar</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
+          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val">ren.costamagna@gmail.com</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
+          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val">renzo.costamagna@ecloudsolutions.com</span></div>
+          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">12345678</span></div>
         </div>
       </div>
 
@@ -634,13 +641,9 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
       </div>
       <div>
         <div class="box green" style="margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">Pendientes de confirmación</div>
-          <div class="module-item">Fecha definitiva de Piloto Campillo</div>
-          <div class="module-item">Fecha de EAR 2026</div>
           <div class="module-item">Calendario de Webinares por Regional</div>
-          <div class="module-item">Fecha de Congreso Aapresid</div>
           <div class="module-item">Referentes Aapresid para Carbono y CaminoAR</div>
           <div class="module-item">Líderes técnicos ecloud por programa (REM, Carbono, ASC)</div>
-          <div class="module-item">Credenciales de acceso a entornos (DEV / UAT / LIVE)</div>
           <div class="module-item">Alcance definitivo integración SRA</div>
         </div>
         <div class="box" style="padding:14px 16px">
@@ -672,38 +675,7 @@ h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:60
   </div>
 </div>
 
-<!-- 13 BURNDOWN -->
-<div class="slide" data-label="Burndown">
-  <div class="stagger wide">
-    <div class="eyebrow">Velocidad del equipo</div>
-    <h2><em>Burndown</em> Chart — v1.0</h2>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:clamp(8px,1.2vh,12px)">
-      <div class="box" style="padding:10px 14px">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Total</div>
-        <div style="font-family:'Fraunces',serif;font-size:clamp(18px,2.2vw,26px);font-weight:700;color:var(--ink);line-height:1">240</div>
-        <div style="font-size:10px;color:var(--ink3);margin-top:2px">story points</div>
-      </div>
-      <div class="box green" style="padding:10px 14px">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Completados</div>
-        <div style="font-family:'Fraunces',serif;font-size:clamp(18px,2.2vw,26px);font-weight:700;color:var(--ink);line-height:1">19</div>
-        <div style="font-size:10px;color:var(--ink3);margin-top:2px">sprints 1-2</div>
-      </div>
-      <div class="box" style="padding:10px 14px">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Velocidad</div>
-        <div style="font-family:'Fraunces',serif;font-size:clamp(18px,2.2vw,26px);font-weight:700;color:var(--ink);line-height:1">9.5</div>
-        <div style="font-size:10px;color:var(--ink3);margin-top:2px">pts / sprint</div>
-      </div>
-      <div class="box amber" style="padding:10px 14px">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Proyección</div>
-        <div style="font-family:'Fraunces',serif;font-size:clamp(18px,2.2vw,26px);font-weight:700;color:var(--ink);line-height:1">v1.0</div>
-        <div style="font-size:10px;color:var(--ink3);margin-top:2px">S16 · ago 2026</div>
-      </div>
-    </div>
-    <div id="burndown-svg" style="width:100%"></div>
-  </div>
-</div>
-
-<!-- 14 CIERRE -->
+<!-- 13 CIERRE -->
 <div class="slide slide-cover" data-label="Cierre">
   <div class="stagger" style="position:relative;z-index:2;width:100%;padding-top:clamp(8px,3vh,32px)">
     <div class="eyebrow">ecloud × Aapresid — 2026</div>
@@ -924,119 +896,7 @@ function drawTimeline() {
   el.innerHTML = s;
 }
 
-// ── Burndown Chart ───────────────────────────────────────────
-function drawBurndown() {
-  const el = document.getElementById('burndown-svg');
-  if (!el) return;
-  const W = 760, H = 175, padL = 42, padR = 12, padT = 18, padB = 56; // padB grande para labels rotados
-  const cW = W - padL - padR, cH = H - padT - padB;
-
-  // Sprints semanales mapeados a milestones reales (Linear)
-  // S0=Apr17, S1=Apr24, S2=Apr30, S3=May8, S4=May11, S5=May15 (EAR)
-  // S6-S20: fases siguientes hasta Congreso (~Oct)
-  const sprints = 20;
-  const total   = 240;
-
-  // Milestone markers — etiquetas escalonadas (arriba/abajo) para los cercanos
-  // row: 0 = abajo normal, 1 = abajo desplazado, 2 = abajo más desplazado
-  // Sprints semanales: S0=Apr17, S1=Apr24, S2=Apr30, S3=May8, S4=May11, S5=May15
-  const markers = [
-    { sp:1,  lbl:'Carga de datos',              date:'24 Abr', c:'#8B6914', row:1 },
-    { sp:2,  lbl:'Análisis self-service',        date:'30 Abr', c:'#8B6914', row:0 },
-    { sp:3,  lbl:'Datos cruzados',              date:'8 May',  c:'#1A3A5E', row:2 },
-    { sp:4,  lbl:'Prueba interna',              date:'11 May', c:'#1A3A5E', row:1 },
-    { sp:5,  lbl:'Evento EAR',                  date:'15 May', c:'#2A5E3A', row:0 },
-    { sp:16, lbl:'v1.0',                        date:'ago',    c:'#2A5E3A', row:0 },
-    { sp:20, lbl:'Congreso',                    date:'sep',    c:'#2A5E3A', row:0 },
-  ];
-
-  // Hoy: Apr 20 = S0 + 3 días ≈ sprint 0 (recibir data 100% completado)
-  const curSpr = 0;
-  const curPts = 221; // 240 - 19 completados (recibir data Aapresid)
-
-  const ideal  = Array.from({length:sprints+1}, (_,i) => total - (total/sprints)*i);
-  const actual = [240,221]; // solo S0 completado + hoy con 221 restantes
-
-  function xp(sp){ return padL + (sp/sprints)*cW; }
-  function yp(pt){ return padT + (1 - pt/total)*cH; }
-
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block">`;
-
-  // Grid horizontal
-  [0,60,120,180,240].forEach(pt => {
-    const y = yp(pt);
-    s += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="rgba(26,26,18,.07)" stroke-width="1"/>`;
-    s += `<text x="${padL-6}" y="${y+4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" text-anchor="end">${pt}</text>`;
-  });
-
-  // Grid vertical en semanas reales (milestones)
-  // S0=17 Abr, S1=24 Abr, S2=30 Abr, S3=8 May, S4=11 May, S5=15 May, S16=ago, S20=sep
-  const gridWeeks = [
-    { sp:0,  lbl:'17 Abr' },
-    { sp:1,  lbl:'24 Abr' },
-    { sp:2,  lbl:'30 Abr' },
-    { sp:3,  lbl:'8 May'  },
-    { sp:4,  lbl:'11 May' },
-    { sp:5,  lbl:'15 May' },
-    { sp:16, lbl:'ago'    },
-    { sp:20, lbl:'sep'    },
-  ];
-  gridWeeks.forEach(w => {
-    const x = xp(w.sp);
-    s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="rgba(26,26,18,.06)" stroke-width="1"/>`;
-    s += `<text x="${x}" y="${H-padB+10}" font-family="'DM Mono',monospace" font-size="8" fill="rgba(26,26,18,.3)" text-anchor="middle">${w.lbl}</text>`;
-  });
-
-  // Milestone markers
-  // — S1-S5 (cercanos, comprimidos): label rotado -40° para no superponerse
-  // — S16, S20 (lejanos, espacio de sobra): label horizontal normal
-  markers.forEach(v => {
-    const x = xp(v.sp);
-    s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H-padB}" stroke="${v.c}" stroke-width="1" stroke-opacity=".2" stroke-dasharray="3,2"/>`;
-    if (v.sp <= 5) {
-      // Rotado -40° — solo nombre, la fecha ya está en el eje X
-      s += `<text transform="translate(${x},${H-padB+20}) rotate(-40)" font-family="'DM Mono',monospace" font-size="8" fill="${v.c}" text-anchor="end" opacity=".85">${v.lbl}</text>`;
-    } else {
-      // Horizontal normal para milestones lejanos
-      s += `<text x="${x}" y="${H-padB+22}" font-family="'DM Mono',monospace" font-size="8.5" fill="${v.c}" text-anchor="middle" opacity=".85">${v.lbl}</text>`;
-      if (v.date) s += `<text x="${x}" y="${H-padB+32}" font-family="'DM Mono',monospace" font-size="7.5" fill="${v.c}" text-anchor="middle" opacity=".55">${v.date}</text>`;
-    }
-  });
-
-  // Ideal line
-  const iPath = ideal.map((pt,i) => `${i===0?'M':'L'}${xp(i).toFixed(1)},${yp(pt).toFixed(1)}`).join(' ');
-  s += `<path d="${iPath}" fill="none" stroke="rgba(26,26,18,.18)" stroke-width="1.5" stroke-dasharray="5,4"/>`;
-
-  // Actual
-  const aPath = `M${xp(0).toFixed(1)},${yp(240).toFixed(1)} L${xp(curSpr).toFixed(1)},${yp(curPts).toFixed(1)}`;
-  s += `<path d="${aPath} L${xp(curSpr).toFixed(1)},${H-padB} L${padL},${H-padB} Z" fill="rgba(42,94,58,.07)"/>`;
-  s += `<path d="${aPath}" fill="none" stroke="#2A5E3A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-  // Proyección
-  const velocity = curPts / (sprints - curSpr);
-  const projPath = Array.from({length: sprints - curSpr + 1}, (_,i) => {
-    const sp = curSpr + i, pt = Math.max(0, curPts - velocity*i);
-    return `${i===0?'M':'L'}${xp(sp).toFixed(1)},${yp(pt).toFixed(1)}`;
-  }).join(' ');
-  s += `<path d="${projPath}" fill="none" stroke="#2A5E3A" stroke-width="1.5" stroke-dasharray="4,3" opacity=".35"/>`;
-
-  // Punto hoy — anotación DEBAJO del dot para no chocar con leyenda
-  const cx = xp(curSpr), cy = yp(curPts);
-  s += `<circle cx="${cx}" cy="${cy}" r="5" fill="#2A5E3A" stroke="white" stroke-width="2"/>`;
-  s += `<text x="${cx+9}" y="${cy+14}" font-family="'DM Mono',monospace" font-size="8.5" fill="#2A5E3A">Hoy · Apr 20 · ${curPts} pts</text>`;
-
-  // Leyenda — esquina superior DERECHA para evitar overlap con el punto
-  const lx = W - padR;
-  s += `<text x="${lx}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="8.5" fill="rgba(42,94,58,.65)" text-anchor="end">── Proyección</text>`;
-  s += `<text x="${lx-110}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="8.5" fill="#2A5E3A" text-anchor="end">— Real</text>`;
-  s += `<text x="${lx-152}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="8.5" fill="rgba(26,26,18,.35)" text-anchor="end">- - Ideal</text>`;
-
-  s += '</svg>';
-  el.innerHTML = s;
-}
-
 drawTimeline();
-drawBurndown();
 </script>
 </body>
 </html>
