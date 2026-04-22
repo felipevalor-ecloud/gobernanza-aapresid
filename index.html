@@ -1,901 +1,2279 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aapresid × ecloud — Gobernanza del Proyecto 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #F5F2EB; --bg2: #EDE9DF;
-  --ink: #1A1A12; --ink2: #3A3A2A; --ink3: #6A6A50; --ink4: #9A9A78;
-  --green: #2A5E3A; --green-mid: #3D7A4F; --green-light: #C8DDB0; --green-pale: #EBF3E0;
-  --amber: #8B6914; --amber-light: #F5E9C8;
-  --blue: #1A3A5E; --blue-light: #D0DDF5;
-  --rule: rgba(26,26,18,0.12); --rule-strong: rgba(26,26,18,0.25);
-}
-
-html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--ink); font-family:'Instrument Sans',sans-serif; }
-@media (pointer:fine){ body{cursor:none} }
-@media (pointer:coarse){ .cursor,.cursor-ring{display:none!important} }
-
-.cursor{ position:fixed;width:10px;height:10px;background:var(--green);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply; }
-.cursor-ring{ position:fixed;width:32px;height:32px;border:1px solid rgba(42,94,58,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .12s ease-out; }
-.grain{ position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:160px; }
-
-/* DECK */
-.deck{ width:100vw;height:100vh;position:relative;overflow:hidden; }
-.slide{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  justify-content:flex-start;align-items:flex-start;
-  padding:clamp(60px,9vh,88px) clamp(18px,6vw,88px) clamp(60px,8vh,80px);
-  opacity:0;pointer-events:none;transform:translateY(28px);
-  transition:opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1);
-  overflow:hidden;
-}
-.slide.active{ opacity:1;pointer-events:all;transform:translateY(0); }
-.slide.exit{ opacity:0;transform:translateY(-20px);transition:opacity .35s ease,transform .35s ease; }
-
-/* STAGGER */
-.stagger>*{ opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease; }
-.slide.active .stagger>*{ opacity:1;transform:translateY(0); }
-.slide.active .stagger>*:nth-child(1){ transition-delay:.07s }
-.slide.active .stagger>*:nth-child(2){ transition-delay:.14s }
-.slide.active .stagger>*:nth-child(3){ transition-delay:.21s }
-.slide.active .stagger>*:nth-child(4){ transition-delay:.28s }
-.slide.active .stagger>*:nth-child(5){ transition-delay:.35s }
-.slide.active .stagger>*:nth-child(6){ transition-delay:.42s }
-
-/* TOPBAR */
-.topbar{ position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:14px clamp(14px,4vw,40px);z-index:100; }
-.logo-area{ display:flex;align-items:center;gap:10px;min-width:0; }
-.logo-badge{ width:30px;height:30px;border-radius:7px;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
-.logo-badge svg{ width:17px;height:17px; }
-.logo-name{ font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.02em;white-space:nowrap; }
-.logo-sep{ width:1px;height:16px;background:var(--rule-strong);flex-shrink:0; }
-.logo-partner{ font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.slide-label{ font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0; }
-@media(max-width:520px){ .logo-sep,.logo-partner{display:none} }
-
-/* PROGRESS */
-.progress-bar{ position:fixed;top:0;left:0;height:2px;background:var(--green);z-index:200;transition:width .5s cubic-bezier(.16,1,.3,1); }
-
-/* NAV */
-.nav{ position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:4px;background:var(--ink);border-radius:100px;padding:5px 12px;z-index:100; }
-.nav-btn{ width:28px;height:28px;border-radius:50%;border:none;background:transparent;cursor:pointer;color:rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:13px;transition:color .2s; }
-.nav-btn:hover{ color:#fff }
-.nav-count{ font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:rgba(255,255,255,.4);min-width:38px;text-align:center; }
-
-/* DOTS */
-.dots{ position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:100; }
-.dot{ width:4px;height:4px;border-radius:50%;background:rgba(26,26,18,.2);cursor:pointer;transition:all .3s;border:none; }
-.dot.active{ background:var(--green);transform:scale(1.6); }
-@media(max-width:480px){ .dots{display:none} }
-
-/* TYPE */
-.eyebrow{ font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--green-mid);display:flex;align-items:center;gap:10px;margin-bottom:clamp(10px,1.8vh,18px); }
-.eyebrow::before{ content:'';display:block;width:18px;height:1px;background:var(--green-mid); }
-h1{ font-family:'Fraunces',serif;font-size:clamp(34px,7vw,86px);font-weight:700;line-height:.95;letter-spacing:-.035em;color:var(--ink);margin-bottom:clamp(14px,2vh,22px); }
-h1 em{ font-style:italic;color:var(--green); }
-h2{ font-family:'Fraunces',serif;font-size:clamp(22px,3.8vw,50px);font-weight:600;line-height:1.0;letter-spacing:-.03em;color:var(--ink);margin-bottom:clamp(8px,1.2vh,14px); }
-h2 em{ font-style:italic;color:var(--green); }
-h3{ font-family:'Fraunces',serif;font-size:clamp(13px,1.4vw,17px);font-weight:600;color:var(--ink);margin-bottom:8px; }
-.lead{ font-size:clamp(13px,1.4vw,17px);font-weight:400;line-height:1.7;color:var(--ink2);max-width:520px; }
-.body{ font-size:clamp(11px,1vw,13px);line-height:1.7;color:var(--ink3);font-weight:400; }
-
-/* LAYOUT */
-.wide{ width:100%; }
-.two-col{ display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3.5vw,48px);width:100%;align-items:start; }
-.three-col{ display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.2vw,18px);width:100%; }
-.four-col{ display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(7px,1vw,14px);width:100%; }
-@media(max-width:700px){ .two-col{grid-template-columns:1fr} .three-col{grid-template-columns:1fr 1fr} .four-col{grid-template-columns:1fr 1fr} }
-@media(max-width:400px){ .three-col,.four-col{grid-template-columns:1fr} }
-
-/* UTILS */
-.rule{ width:100%;height:1px;background:var(--rule);margin:clamp(8px,1.2vh,18px) 0; }
-.tag{ display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--rule-strong);color:var(--ink3);background:transparent; }
-.tag.green{ border-color:var(--green);color:var(--green);background:var(--green-pale); }
-.tag.amber{ border-color:var(--amber);color:var(--amber);background:var(--amber-light); }
-.tag.blue{ border-color:var(--blue);color:var(--blue);background:var(--blue-light); }
-
-/* PERSON */
-.person{ display:flex;align-items:flex-start;gap:10px;padding:clamp(7px,1vh,12px) 0;border-bottom:1px solid var(--rule); }
-.person:last-child{ border-bottom:none }
-.person-avatar{ width:33px;height:33px;border-radius:9px;background:var(--green-pale);border:1px solid var(--green-light);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:11px;font-weight:700;color:var(--green);flex-shrink:0; }
-.person-info{ flex:1;min-width:0; }
-.person-name{ font-size:clamp(11px,1vw,13px);font-weight:600;color:var(--ink);margin-bottom:1px; }
-.person-role{ font-size:clamp(10px,.9vw,11px);color:var(--ink3);line-height:1.4; }
-.person-org{ font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px;letter-spacing:.04em; }
-
-/* BOX */
-.box{ background:var(--bg2);border:1px solid var(--rule-strong);border-radius:12px;padding:clamp(12px,1.8vw,22px) clamp(12px,1.8vw,22px); }
-.box.green{ background:var(--green-pale);border-color:var(--green-light); }
-.box.amber{ background:var(--amber-light);border-color:rgba(139,105,20,.25); }
-.box.blue{ background:var(--blue-light);border-color:rgba(26,58,94,.2); }
-
-/* MILESTONE */
-.milestone{ display:flex;gap:12px;align-items:flex-start;padding:clamp(7px,1vh,12px) 0;border-bottom:1px solid var(--rule); }
-.milestone:last-child{ border-bottom:none }
-.ms-dot{ width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;box-shadow:0 0 0 3px var(--green-pale); }
-.ms-dot.amber{ background:var(--amber);box-shadow:0 0 0 3px var(--amber-light); }
-.ms-dot.blue{ background:var(--blue);box-shadow:0 0 0 3px var(--blue-light); }
-.ms-content{ flex:1;min-width:0; }
-.ms-date{ font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--ink4);letter-spacing:.08em;margin-bottom:1px; }
-.ms-title{ font-size:clamp(11px,1vw,13px);font-weight:600;color:var(--ink);margin-bottom:2px; }
-.ms-desc{ font-size:clamp(10px,.9vw,12px);color:var(--ink3);line-height:1.5; }
-
-/* MODULE */
-.module-header{ font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--green-mid);margin-bottom:5px;display:flex;align-items:center;gap:8px; }
-.module-header::after{ content:'';flex:1;height:1px;background:var(--rule); }
-.module-item{ font-size:clamp(10px,.95vw,12px);color:var(--ink2);line-height:1.5;padding:3px 0 3px 13px;position:relative; }
-.module-item::before{ content:'—';position:absolute;left:0;color:var(--ink4); }
-
-/* ENV CARDS */
-.env-cards{ display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.5vw,18px);width:100%;margin-top:clamp(10px,1.5vh,16px); }
-@media(max-width:680px){ .env-cards{grid-template-columns:1fr} }
-
-.env-card{ border-radius:12px;padding:clamp(12px,1.8vw,20px);border:1px solid var(--rule-strong);background:var(--bg2); }
-.env-card.dev{ border-top:3px solid var(--amber); }
-.env-card.uat{ border-top:3px solid var(--blue); }
-.env-card.live{ border-top:3px solid var(--green); }
-
-.env-header{ display:flex;align-items:center;gap:7px;margin-bottom:8px; }
-.env-dot-lg{ width:7px;height:7px;border-radius:50%;flex-shrink:0; }
-.env-dot-lg.dev{ background:var(--amber) }
-.env-dot-lg.uat{ background:var(--blue) }
-.env-dot-lg.live{ background:var(--green) }
-.env-lbl{ font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase; }
-.env-lbl.dev{ color:var(--amber) } .env-lbl.uat{ color:var(--blue) } .env-lbl.live{ color:var(--green) }
-.env-desc{ font-size:clamp(10px,.95vw,12px);color:var(--ink3);line-height:1.5;margin-bottom:12px; }
-
-.env-url-block{ margin-bottom:8px; }
-.env-url-lbl{ font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink4);margin-bottom:3px; }
-.env-url{ display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--rule);border-radius:7px;padding:5px 9px;margin-bottom:4px;text-decoration:none;transition:border-color .2s; }
-.env-url:hover{ border-color:var(--green) }
-.env-url-panel{ font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em;flex-shrink:0;min-width:34px; }
-.env-url-text{ font-family:'DM Mono',monospace;font-size:clamp(9px,.9vw,11px);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-.env-url-text.ph{ color:var(--ink4);font-style:italic; }
-
-.env-creds{ background:var(--bg);border:1px solid var(--rule);border-radius:7px;padding:7px 9px;margin-top:6px; }
-.env-creds-title{ font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px; }
-.cred-row{ display:flex;justify-content:space-between;align-items:center;margin-bottom:3px; }
-.cred-row:last-child{ margin-bottom:0 }
-.cred-key{ color:var(--ink3);font-size:10px; }
-.cred-val{ font-family:'DM Mono',monospace;font-size:10px;color:var(--ink);background:var(--bg2);padding:1px 6px;border-radius:4px;border:1px solid var(--rule); }
-.cred-val.ph{ color:var(--ink4);font-style:italic;border-style:dashed; }
-
-/* VERSION BADGE */
-.version-badge{ display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 5px;border-radius:100px;background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:10px;font-weight:500; }
-.version-num{ background:var(--green);color:white;padding:1px 6px;border-radius:100px;font-size:9px;font-weight:700; }
-
-/* LOGIN */
-#login-screen{
-  position:fixed;inset:0;background:var(--ink);z-index:10000;
-  display:flex;align-items:center;justify-content:center;
-  padding:24px;
-}
-#login-screen.hidden{ display:none; }
-.login-box{
-  width:100%;max-width:380px;
-}
-.login-logo{ display:flex;align-items:center;gap:10px;margin-bottom:40px; }
-.login-logo-badge{ width:36px;height:36px;border-radius:9px;background:var(--green);display:flex;align-items:center;justify-content:center; }
-.login-logo-badge svg{ width:20px;height:20px; }
-.login-logo-name{ font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:#fff;letter-spacing:-.02em; }
-.login-logo-sep{ width:1px;height:18px;background:rgba(255,255,255,.15); }
-.login-logo-partner{ font-size:11px;font-weight:500;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase; }
-.login-title{ font-family:'Fraunces',serif;font-size:clamp(26px,5vw,36px);font-weight:700;color:#fff;line-height:.95;letter-spacing:-.03em;margin-bottom:8px; }
-.login-title em{ font-style:italic;color:#A8CCAA; }
-.login-sub{ font-size:13px;color:rgba(255,255,255,.45);margin-bottom:32px;line-height:1.5; }
-.login-field{ margin-bottom:14px; }
-.login-label{ display:block;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:7px; }
-.login-input{
-  width:100%;padding:12px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;color:#fff;font-size:14px;font-family:'Instrument Sans',sans-serif;
-  outline:none;transition:border-color .2s;
-}
-.login-input:focus{ border-color:rgba(168,204,170,.5); }
-.login-input::placeholder{ color:rgba(255,255,255,.2); }
-.login-btn{
-  width:100%;padding:13px;background:var(--green);border:none;border-radius:10px;
-  color:#fff;font-size:14px;font-weight:600;font-family:'Instrument Sans',sans-serif;
-  cursor:pointer;margin-top:6px;transition:background .2s;
-}
-.login-btn:hover{ background:var(--green-mid); }
-.login-btn:disabled{ opacity:.5;cursor:not-allowed; }
-.login-error{
-  font-size:12px;color:#F4A4A4;font-family:'DM Mono',monospace;
-  letter-spacing:.04em;margin-top:12px;display:none;
-}
-.login-error.show{ display:block; }
-.login-footer{ margin-top:32px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.15);letter-spacing:.08em;text-align:center; }
-
-/* LOGOUT BTN */
-.logout-btn{
-  font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--ink4);background:none;border:1px solid var(--rule);
-  border-radius:100px;padding:4px 12px;cursor:pointer;transition:all .2s;
-}
-.logout-btn:hover{ color:var(--ink);border-color:var(--rule-strong); }
-
-/* SCROLL */
-.slide-scroll{ overflow-y:auto;max-height:calc(100vh - clamp(140px,20vh,210px));padding-right:4px;width:100%; }
-.slide-scroll::-webkit-scrollbar{ width:2px }
-.slide-scroll::-webkit-scrollbar-thumb{ background:var(--rule-strong);border-radius:1px }
-
-/* SLIDE VARIANTS */
-.slide-cover{ background:var(--ink);color:#fff; }
-.slide-cover .eyebrow{ color:var(--green-light); }
-.slide-cover .eyebrow::before{ background:var(--green-light); }
-.slide-cover h1{ color:#fff; }
-.slide-cover h1 em{ color:#A8CCAA; }
-.slide-cover .lead{ color:rgba(255,255,255,.65); }
-.slide-cover .tag{ border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.5); }
-.slide-cover .rule{ background:rgba(255,255,255,.1); }
-.slide-alt{ background:var(--bg2); }
-</style>
-</head>
-<body>
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-logo-badge">
-        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" opacity=".5"/><path d="M10 4C10 4 14 6.5 14 10C14 13.5 10 16 10 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="2" fill="white"/></svg>
-      </div>
-      <span class="login-logo-name">ecloud</span>
-      <div class="login-logo-sep"></div>
-      <span class="login-logo-partner">Aapresid</span>
-    </div>
-    <h1 class="login-title">Gobernanza<br><em>2026</em></h1>
-    <p class="login-sub">Documento confidencial. Ingresá con tu cuenta autorizada.</p>
-    <div class="login-field">
-      <label class="login-label" for="login-email">Email</label>
-      <input class="login-input" type="email" id="login-email" placeholder="tu@email.com" autocomplete="email" />
-    </div>
-    <div class="login-field">
-      <label class="login-label" for="login-password">Contraseña</label>
-      <input class="login-input" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
-    </div>
-    <button class="login-btn" id="login-btn" onclick="handleLogin()">Ingresar →</button>
-    <p class="login-error" id="login-error"></p>
-    <p class="login-footer">DOCUMENTO CONFIDENCIAL — ABRIL 2026</p>
-  </div>
-</div>
-
-<div class="grain"></div>
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="ring"></div>
-<div class="progress-bar" id="progress"></div>
-
-<div class="topbar">
-  <div class="logo-area">
-    <div class="logo-badge">
-      <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" opacity=".5"/><path d="M10 4C10 4 14 6.5 14 10C14 13.5 10 16 10 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="10" r="2" fill="white"/></svg>
-    </div>
-    <span class="logo-name">ecloud</span>
-    <div class="logo-sep"></div>
-    <span class="logo-partner">Aapresid — Proyecto DataSet</span>
-  </div>
-  <div style="display:flex;align-items:center;gap:12px">
-    <span class="slide-label" id="topLabel">Gobernanza</span>
-    <button class="logout-btn" id="logout-btn" onclick="handleLogout()" style="display:none">Salir</button>
-  </div>
-</div>
-
-<div class="dots" id="dots"></div>
-<div class="nav">
-  <button class="nav-btn" onclick="navigate(-1)">←</button>
-  <span class="nav-count" id="navCount">01/12</span>
-  <button class="nav-btn" onclick="navigate(1)">→</button>
-</div>
-
-<div class="deck" id="deck">
-
-<!-- 01 COVER -->
-<div class="slide slide-cover active" data-label="Inicio">
-  <div class="stagger" style="position:relative;z-index:2;width:100%;max-width:860px;padding-top:clamp(8px,3vh,32px)">
-    <div class="eyebrow">Documento de Gobernanza — Confidencial</div>
-    <h1>Proyecto<br><em>DataSet</em><br>& Programas</h1>
-    <div class="rule"></div>
-    <p class="lead">Estructura de equipo, entregables por versión, hitos públicos y modelo de coordinación para el desarrollo de la plataforma digital de Aapresid.</p>
-    <div style="margin-top:clamp(14px,2.5vh,28px);display:flex;gap:7px;flex-wrap:wrap">
-      <span class="tag">DataSet</span><span class="tag">CaminoAR</span><span class="tag">ENVAA</span><span class="tag">Integraciones</span><span class="tag">ecloud × Nativas</span>
-    </div>
-    <p style="margin-top:22px;font-size:10px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;letter-spacing:.08em">ABRIL 2026 — v1.0</p>
-  </div>
-</div>
-
-<!-- 02 ROL GASPAR -->
-<div class="slide slide-alt" data-label="Liderazgo">
-  <div class="stagger wide">
-    <div class="eyebrow">Rol estratégico</div>
-    <h2>Líder de <em>Innovación</em></h2>
-    <div class="two-col" style="margin-top:clamp(10px,1.8vh,22px)">
-      <div>
-        <div class="box green" style="margin-bottom:12px">
-          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Gaspar Mac — ecloud</div>
-          <div style="font-size:clamp(14px,1.6vw,19px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.2">Líder de Innovación<br>& Transformación Digital</div>
-          <p class="body">Responsable de la visión del producto, arquitectura funcional y alineación estratégica entre Aapresid y ecloud. Referente de decisiones tecnológicas y punto de escalación.</p>
-        </div>
-        <div class="body" style="max-width:400px"><strong style="color:var(--ink)">¿Por qué este rol?</strong> Para que ecloud tenga legitimidad en la sala, Gaspar opera como líder de transformación digital embebido en el proyecto — no como proveedor externo. Esto habilita decisiones más rápidas y mayor confianza del equipo Aapresid.</div>
-      </div>
-      <div>
-        <h3 style="font-size:13px;margin-bottom:10px">Responsabilidades del rol</h3>
-        <div class="person" style="padding:9px 0"><div class="ms-dot" style="margin-top:3px"></div><div><div class="person-name">Visión de producto</div><div class="person-role">Define qué se construye, para quién y en qué orden.</div></div></div>
-        <div class="person" style="padding:9px 0"><div class="ms-dot" style="margin-top:3px"></div><div><div class="person-name">Arquitectura funcional</div><div class="person-role">Diseña la estructura de módulos, versiones y entregables.</div></div></div>
-        <div class="person" style="padding:9px 0"><div class="ms-dot" style="margin-top:3px"></div><div><div class="person-name">Alineación estratégica</div><div class="person-role">Puente entre necesidades de Aapresid y capacidades del equipo de desarrollo.</div></div></div>
-        <div class="person" style="padding:9px 0"><div class="ms-dot" style="margin-top:3px"></div><div><div class="person-name">Gobernanza del proyecto</div><div class="person-role">Preside la PMO. Define reuniones, reportes y escalación.</div></div></div>
-        <div class="person" style="padding:9px 0;border-bottom:none"><div class="ms-dot" style="margin-top:3px"></div><div><div class="person-name">Innovación continua</div><div class="person-role">Identifica oportunidades de mejora tecnológica e IA.</div></div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 03 EQUIPO -->
-<div class="slide" data-label="Equipo">
-  <div class="stagger wide">
-    <div class="eyebrow">Estructura de equipo</div>
-    <h2>Equipo <em>ecloud × Nativas</em> × Aapresid</h2>
-    <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-mid);margin-bottom:7px">— ecloud & Nativas</div>
-        <div class="person"><div class="person-avatar">GM</div><div class="person-info"><div class="person-name">Gaspar Mac</div><div class="person-role">Líder de Innovación & Transformación Digital</div><div class="person-org">ecloud</div></div></div>
-        <div class="person"><div class="person-avatar">FT</div><div class="person-info"><div class="person-name">Francisco Tagliarini</div><div class="person-role">Project Manager — coordinación y seguimiento</div><div class="person-org">ecloud</div></div></div>
-        <div class="person"><div class="person-avatar">FV</div><div class="person-info"><div class="person-name">Felipe Valor</div><div class="person-role">Product Manager — roadmap y backlog</div><div class="person-org">ecloud</div></div></div>
-        <div class="person"><div class="person-avatar">LB</div><div class="person-info"><div class="person-name">Lara Brizio</div><div class="person-role">Líder de CaminoAR</div><div class="person-org">Nativas</div></div></div>
-        <div class="person" style="border-bottom:none"><div class="person-avatar">TDL</div><div class="person-info"><div class="person-name">Tomás De Lorenzi</div><div class="person-role">Líder de ENVAA</div><div class="person-org">Nativas</div></div></div>
-      </div>
-      <div>
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-mid);margin-bottom:7px">— Aapresid</div>
-        <div class="person"><div class="person-avatar" style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">TC</div><div class="person-info"><div class="person-name">Tomás Coyos</div><div class="person-role">Coordinación general + Integraciones externas</div><div class="person-org">Aapresid</div></div></div>
-        <div class="person"><div class="person-avatar" style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">CB</div><div class="person-info"><div class="person-name">Carla Biasutti</div><div class="person-role">Análisis de rendimiento de campañas e integración con Conecta</div><div class="person-org">Aapresid</div></div></div>
-        <div class="person"><div class="person-avatar" style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">AM</div><div class="person-info"><div class="person-name">Andrés Madias</div><div class="person-role">Integración experimental + revisión de salidas técnicas</div><div class="person-org">Aapresid</div></div></div>
-        <div class="person"><div class="person-avatar" style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">EN</div><div class="person-info"><div class="person-name">Eugenia Niccia</div><div class="person-role">Integración Red de Manejo de Plagas (REM)</div><div class="person-org">Aapresid</div></div></div>
-        <div class="person" style="border-bottom:none"><div class="person-avatar" style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">RB</div><div class="person-info"><div class="person-name">Rocío Belda</div><div class="person-role">Indicadores de sustentabilidad y certificaciones</div><div class="person-org">Aapresid</div></div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 04 ALCANCE -->
-<div class="slide slide-alt" data-label="Alcance">
-  <div class="stagger wide">
-    <div class="eyebrow">Alcance del producto</div>
-    <h2>Módulos del <em>Sistema</em></h2>
-    <div class="three-col" style="margin-top:clamp(8px,1.5vh,18px)">
-      <div class="box">
-        <div class="module-header">Panel Productor</div>
-        <div class="module-item">Registro y login</div>
-        <div class="module-item">Módulo de Campaña — onboarding XLS, validación, informes</div>
-        <div class="module-item">Módulo de Establecimiento</div>
-        <div class="module-item">Módulo de Programas</div>
-        <div class="module-item">Módulo de Integraciones</div>
-        <div class="module-item">Módulo de Informes IA</div>
-      </div>
-      <div class="box">
-        <div class="module-header">Panel ATR</div>
-        <div class="module-item">Productores asignados / solicitados</div>
-        <div class="module-item">Carga XLS individual y masiva</div>
-        <div class="module-item">Gestión de validación de variables</div>
-        <div class="module-item">Informe de rendimiento regional y particular</div>
-      </div>
-      <div class="box">
-        <div class="module-header">Panel Admin</div>
-        <div class="module-item">Productores / ATR / Operadores</div>
-        <div class="module-item">Campañas — validaciones e informes</div>
-        <div class="module-item">Establecimientos / Variables / Programas</div>
-        <div class="module-item">Integraciones</div>
-        <div class="module-item">API (Webservice)</div>
-        <div class="module-item">Informes IA</div>
-      </div>
-    </div>
-    <div class="rule"></div>
-    <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
-      <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green-mid);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">Programas</div><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag green">CaminoAR</span><span class="tag green">REM</span><span class="tag green">Inf. Experimental</span><span class="tag green">Carbono</span><span class="tag green">ASC</span></div></div>
-      <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">Otros</div><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag amber">ENVAA</span><span class="tag amber">SRA</span></div></div>
-      <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">Integraciones</div><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag blue">GeoAgro</span><span class="tag blue">Albor</span><span class="tag blue">RindePlus</span><span class="tag blue">Puma</span></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- 05 VERSIONES -->
-<div class="slide" data-label="Versiones">
-  <div class="stagger wide">
-    <div class="eyebrow">Entregables por versión</div>
-    <h2>Roadmap de <em>Versiones</em></h2>
-    <div class="slide-scroll" style="margin-top:clamp(8px,1.2vh,14px)">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px">
-        <div class="box" style="border-left:3px solid var(--amber)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v0.1</span> Alpha</span><span class="tag amber">DEV</span></div>
-          <p class="body" style="margin-bottom:6px">Estructura base. Solo equipo de desarrollo.</p>
-          <div class="module-item">Auth (registro + login)</div><div class="module-item">Carga XLS — Campaña básica</div><div class="module-item">CRUD Establecimientos</div><div class="module-item">Panel Admin base</div>
-        </div>
-        <div class="box" style="border-left:3px solid var(--blue)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v0.5</span> Beta UAT</span><span class="tag blue">UAT</span></div>
-          <p class="body" style="margin-bottom:6px">Piloto interno. Primer testeo con actores clave.</p>
-          <div class="module-item">Flujo completo Campaña (Productor)</div><div class="module-item">Panel ATR operativo</div><div class="module-item">Validación de variables</div><div class="module-item">Informe de rendimiento v1</div><div class="module-item">CaminoAR — módulo básico</div>
-          <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: Piloto Campillo</div>
-        </div>
-        <div class="box" style="border-left:3px solid var(--green)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v1.0</span> Release</span><span class="tag green">LIVE</span></div>
-          <p class="body" style="margin-bottom:6px">Primera versión estable. Acceso público.</p>
-          <div class="module-item">Paneles Productor + ATR completos</div><div class="module-item">CaminoAR integrado · REM</div><div class="module-item">Informes IA v1 · API básica</div><div class="module-item">API de clima</div><div class="module-item">RindePlus</div>
-          <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: EAR + Webinares</div>
-        </div>
-        <div class="box" style="border-left:3px solid var(--green)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v1.5</span> Integraciones</span><span class="tag green">LIVE</span></div>
-          <p class="body" style="margin-bottom:6px">Integraciones externas y programas adicionales.</p>
-          <div class="module-item">Albor / Puma</div><div class="module-item">Inf. Experimental · Carbono · ASC</div>
-          <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: Congreso Aapresid</div>
-        </div>
-        <div class="box" style="border-left:3px solid var(--green)">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px"><span class="version-badge"><span class="version-num">v2.0</span> IA & Escala</span><span class="tag green">LIVE</span></div>
-          <p class="body" style="margin-bottom:6px">Plataforma completa con IA avanzada y ENVAA integrado.</p>
-          <div class="module-item">Informes IA avanzados multi-campaña</div><div class="module-item">ENVAA + SRA integrados</div><div class="module-item">API completa documentada</div><div class="module-item">Dashboard sustentabilidad</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 06 ENTORNOS & ACCESOS -->
-<div class="slide slide-alt" data-label="Entornos & Accesos">
-  <div class="stagger wide">
-    <div class="eyebrow">Accesos al sistema</div>
-    <h2>Entornos & <em>URLs</em></h2>
-    <div class="env-cards">
-
-      <!-- DEV -->
-      <div class="env-card dev">
-        <div class="env-header"><div class="env-dot-lg dev"></div><span class="env-lbl dev">Staging</span></div>
-        <p class="env-desc">Pruebas funcionales del equipo. Datos aleatorios, sin impacto en producción.</p>
-        <div class="env-url-block">
-          <div class="env-url-lbl">DataSet</div>
-          <a class="env-url" href="https://v0-staging-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-staging-aapresid-dataset.vercel.app</span></a>
-        </div>
-        <div class="env-url-block">
-          <div class="env-url-lbl">CaminoAR</div>
-          <a class="env-url" href="https://v0-caminoar.vercel.app/welcome" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-caminoar.vercel.app</span></a>
-        </div>
-        <div class="env-url-block">
-          <div class="env-url-lbl">ENVAA</div>
-          <a class="env-url" href="https://envaa.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">envaa.vercel.app</span></a>
-        </div>
-        <div class="env-creds">
-          <div class="env-creds-title">Credenciales</div>
-          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val">gaspar@nativas.ar</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
-          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val">ren.costamagna@gmail.com</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
-          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val">renzo.costamagna@ecloudsolutions.com</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">12345678</span></div>
-        </div>
-      </div>
-
-      <!-- UAT -->
-      <div class="env-card uat">
-        <div class="env-header"><div class="env-dot-lg uat"></div><span class="env-lbl uat">UAT</span></div>
-        <p class="env-desc">Testing y demos con actores. Datos reales de prueba. Acceso autorizado.</p>
-        <div class="env-url-block">
-          <div class="env-url-lbl">DataSet</div>
-          <a class="env-url" href="https://v0-uat-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-uat-aapresid-dataset.vercel.app</span></a>
-        </div>
-        <div class="env-url-block">
-          <div class="env-url-lbl">CaminoAR</div>
-          <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span class="env-url-text ph">URL por definir</span></div>
-        </div>
-        <div class="env-url-block">
-          <div class="env-url-lbl">ENVAA</div>
-          <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span class="env-url-text ph">URL por definir</span></div>
-        </div>
-        <div class="env-creds">
-          <div class="env-creds-title">Credenciales</div>
-          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val">ren.costamagna@gmail.com</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
-          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val">renzo.costamagna+1@ecloudsolutions.com</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
-        </div>
-      </div>
-
-      <!-- LIVE -->
-      <div class="env-card live">
-        <div class="env-header"><div class="env-dot-lg live"></div><span class="env-lbl live">LIVE</span></div>
-        <p class="env-desc">Acceso público con datos reales de productores. Versión estable validada.</p>
-        <div class="env-url-block">
-          <div class="env-url-lbl">DataSet</div>
-          <a class="env-url" href="https://v0-aapresid-dataset.vercel.app/" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">v0-aapresid-dataset.vercel.app</span></a>
-        </div>
-        <div class="env-url-block">
-          <div class="env-url-lbl">CaminoAR</div>
-          <a class="env-url" href="https://www.caminoar.com" target="_blank"><span class="env-url-panel">App →</span><span class="env-url-text">www.caminoar.com</span></a>
-        </div>
-        <div class="env-url-block">
-          <div class="env-url-lbl">ENVAA</div>
-          <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span class="env-url-text ph">URL por definir</span></div>
-        </div>
-        <div class="env-creds">
-          <div class="env-creds-title">Credenciales</div>
-          <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val">gaspar@nativas.ar</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
-          <div class="cred-row"><span class="cred-key">ATR</span><span class="cred-val">ren.costamagna@gmail.com</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">123456789</span></div>
-          <div class="cred-row"><span class="cred-key">Productor</span><span class="cred-val">renzo.costamagna@ecloudsolutions.com</span></div>
-          <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span class="cred-val">12345678</span></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- 07 GOBERNANZA -->
-<div class="slide" data-label="Gobernanza">
-  <div class="stagger wide">
-    <div class="eyebrow">Modelo de gobernanza</div>
-    <h2>Estructura de <em>Coordinación</em></h2>
-    <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
-      <div>
-        <h3 style="font-size:13px;margin-bottom:10px">Reuniones de seguimiento</h3>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">SEMANAL — Interno ecloud</div><div class="ms-title">Entregable por semana</div><div class="ms-desc">Revisión de avances por proyecto: DataSet, programas, integraciones, ENVAA, SRA. Liderado por Francisco Tagliarini (PM).</div></div></div>
-        <div class="milestone"><div class="ms-dot amber"></div><div class="ms-content"><div class="ms-date">QUINCENAL — ecloud × Aapresid</div><div class="ms-title">Status por proyecto</div><div class="ms-desc">Reporte a Tomás Coyos y coordinadores Aapresid. Revisión de bloqueos y próximos pasos. Liderado por Gaspar Mac.</div></div></div>
-        <div class="milestone"><div class="ms-dot blue"></div><div class="ms-content"><div class="ms-date">SEGÚN NECESIDAD — Operativas</div><div class="ms-title">Reuniones de programa</div><div class="ms-desc">Coordinadas entre el líder ecloud del módulo y el referente Aapresid correspondiente. Sin intermediarios.</div></div></div>
-      </div>
-      <div>
-        <h3 style="font-size:13px;margin-bottom:10px">Líderes por frente</h3>
-        <div class="person"><div class="person-avatar">FT</div><div class="person-info"><div class="person-name">Francisco Tagliarini</div><div class="person-role">Gestión del proyecto — coordinación, seguimiento, reportes</div></div></div>
-        <div class="person"><div class="person-avatar">FV</div><div class="person-info"><div class="person-name">Felipe Valor</div><div class="person-role">Gestión del producto DataSet — backlog, priorización, UX</div></div></div>
-        <div class="person"><div class="person-avatar">LB</div><div class="person-info"><div class="person-name">Lara Brizio</div><div class="person-role">Líder CaminoAR — dominio del programa, integración</div></div></div>
-        <div class="person"><div class="person-avatar">TDL</div><div class="person-info"><div class="person-name">Tomás De Lorenzi</div><div class="person-role">Líder ENVAA — estándar de variables, relevamiento</div></div></div>
-        <div class="person" style="border-bottom:none"><div class="person-avatar" style="background:var(--blue-light);color:var(--blue);border-color:rgba(26,58,94,.3)">TC</div><div class="person-info"><div class="person-name">Tomás Coyos</div><div class="person-role">Coordinación Aapresid + Integraciones externas</div></div></div>
-        <div class="box" style="margin-top:10px;padding:10px 14px"><div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:4px">Escalación</div><p class="body">Cualquier decisión de alcance, presupuesto o estrategia se escala a Gaspar Mac (ecloud) y Tomás Coyos (Aapresid).</p></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 08 PROGRAMAS -->
-<div class="slide slide-alt" data-label="Programas">
-  <div class="stagger wide">
-    <div class="eyebrow">Pilar de programas</div>
-    <h2>Programas <em>Aapresid</em></h2>
-    <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
-      <div>
-        <p class="body" style="margin-bottom:10px;max-width:400px">Cada programa tiene un referente de dominio (Aapresid) y un líder de desarrollo (ecloud).</p>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Programa</div><div class="ms-title">CaminoAR</div><div class="ms-desc">Líder: <strong>Lara Brizio (Nativas)</strong>. Referente Aapresid: por confirmar.</div></div></div>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Programa</div><div class="ms-title">REM — Red de Manejo de Plagas</div><div class="ms-desc">Referente: <strong>Eugenia Niccia</strong>. Líder técnico ecloud: a asignar.</div></div></div>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Programa</div><div class="ms-title">Información Experimental</div><div class="ms-desc">Referente: <strong>Andrés Madias</strong>. Líder técnico ecloud: a asignar.</div></div></div>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Programa</div><div class="ms-title">Carbono</div><div class="ms-desc">Referente Aapresid: por confirmar. Líder técnico ecloud: a asignar.</div></div></div>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Programa</div><div class="ms-title">ASC — Sustentabilidad</div><div class="ms-desc">Referente: <strong>Rocío Belda</strong>. Líder técnico ecloud: a asignar.</div></div></div>
-      </div>
-      <div>
-        <h3 style="font-size:13px;margin-bottom:10px">Otros proyectos</h3>
-        <div class="box amber" style="margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">ENVAA</div><div style="font-size:clamp(12px,1.2vw,14px);font-weight:600;color:var(--ink);margin-bottom:4px">Estándar Nacional de Variables Agronómicas</div><p class="body">Líder: <strong>Tomás De Lorenzi (Nativas)</strong>. Estandarización transversal a todos los programas.</p></div>
-        <div class="box blue" style="margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">SRA</div><div style="font-size:clamp(12px,1.2vw,14px);font-weight:600;color:var(--ink);margin-bottom:4px">Sociedad Rural Argentina</div><p class="body">Coordinación: <strong>Tomás Coyos (Aapresid)</strong>. Líder técnico ecloud: a definir.</p></div>
-        <div class="box"><div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:5px">Proceso por programa</div><div class="module-item">Relevamiento con referente Aapresid</div><div class="module-item">Análisis y definición de requerimientos</div><div class="module-item">Diseño UX/UI del módulo</div><div class="module-item">Desarrollo e integración</div><div class="module-item">Testing UAT → Release LIVE</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 09 INTEGRACIONES -->
-<div class="slide" data-label="Integraciones">
-  <div class="stagger wide">
-    <div class="eyebrow">Ecosistema tecnológico</div>
-    <h2><em>Integraciones</em> externas</h2>
-    <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
-      <div>
-        <p class="body" style="margin-bottom:12px;max-width:400px">Gestión de relaciones con actores externos: <strong>Tomás Coyos (Aapresid)</strong>. Soporte técnico: ecloud.</p>
-        <div class="milestone"><div class="ms-dot blue"></div><div class="ms-content"><div class="ms-date">Integración</div><div class="ms-title">Albor</div><div class="ms-desc">Sistema de gestión. Sincronización de datos operativos.</div></div></div>
-        <div class="milestone"><div class="ms-dot blue"></div><div class="ms-content"><div class="ms-date">Integración</div><div class="ms-title">RindePlus</div><div class="ms-desc">Análisis de rindes. API de datos de campañas.</div></div></div>
-        <div class="milestone"><div class="ms-dot blue"></div><div class="ms-content"><div class="ms-date">Integración</div><div class="ms-title">Puma</div><div class="ms-desc">Alcance a definir con Aapresid.</div></div></div>
-      </div>
-      <div>
-        <div class="box blue" style="margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">API — Webservice</div><div style="font-size:clamp(12px,1.2vw,15px);font-weight:600;color:var(--ink);margin-bottom:4px">Capa de integración central</div><p class="body">API documentada bajo estándar ENVAA. Actores externos consumen y envían datos de forma estandarizada. Gobierno técnico: ecloud.</p></div>
-        <div class="box"><div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:7px">Proceso de integración</div>
-          <div class="milestone" style="padding:6px 0"><div class="ms-dot" style="width:8px;height:8px"></div><div class="ms-content"><div class="ms-title" style="font-size:12px">1. Levantamiento de APIs</div><div class="ms-desc">Auditoría técnica de lo que cada actor expone.</div></div></div>
-          <div class="milestone" style="padding:6px 0"><div class="ms-dot" style="width:8px;height:8px"></div><div class="ms-content"><div class="ms-title" style="font-size:12px">2. Mapeo ENVAA</div><div class="ms-desc">Alinear nomenclatura al estándar nacional.</div></div></div>
-          <div class="milestone" style="padding:6px 0"><div class="ms-dot" style="width:8px;height:8px"></div><div class="ms-content"><div class="ms-title" style="font-size:12px">3. Desarrollo del conector</div><div class="ms-desc">Implementación técnica del puente de datos.</div></div></div>
-          <div class="milestone" style="padding:6px 0;border-bottom:none"><div class="ms-dot" style="width:8px;height:8px"></div><div class="ms-content"><div class="ms-title" style="font-size:12px">4. Validación UAT → LIVE</div><div class="ms-desc">Prueba con datos reales antes de producción.</div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 10 HITOS -->
-<div class="slide slide-alt" data-label="Hitos Públicos">
-  <div class="stagger wide">
-    <div class="eyebrow">Demos y presentaciones</div>
-    <h2>Hitos <em>Públicos</em></h2>
-    <p class="body" style="margin-bottom:clamp(8px,1.5vh,16px);max-width:540px">Cuatro instancias de demostración pública. Cada una requiere versión estable en el entorno correspondiente.</p>
-    <div class="four-col">
-      <div class="box green"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Hito 01</div><div style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">Piloto Campillo</div><p class="body" style="margin-bottom:7px">Piloto cerrado con productores reales. Validación del flujo completo.</p><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag green">UAT</span><span class="tag">v0.5</span></div><div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">FT + FV</div></div>
-      <div class="box amber"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Hito 02</div><div style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">EAR</div><p class="body" style="margin-bottom:7px">Presentación ante ATRs. Demo del panel ATR y flujo productor-ATR.</p><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag amber">LIVE</span><span class="tag">v1.0</span></div><div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Gaspar + TC</div></div>
-      <div class="box blue"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Hito 03</div><div style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">Webinar × Regional</div><p class="body" style="margin-bottom:7px">Serie de webinares por regional. Funcionalidades a productores.</p><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag blue">LIVE</span><span class="tag">v1.0–1.5</span></div><div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">TC + FV</div></div>
-      <div class="box" style="border-left:3px solid var(--ink)"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">Hito 04</div><div style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">Congreso Aapresid</div><p class="body" style="margin-bottom:7px">Presentación principal. Versión con integraciones externas activas.</p><div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag green">LIVE</span><span class="tag">v1.5</span></div><div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Gaspar + TC</div></div>
-    </div>
-    <div class="box" style="margin-top:10px;padding:10px 14px;display:flex;align-items:center;gap:10px"><div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></div><p class="body"><strong style="color:var(--ink)">Congelamiento de versión 7 días antes</strong> de cada hito para QA y preparación de demo. Fechas a confirmar por Aapresid.</p></div>
-  </div>
-</div>
-
-<!-- 11 PRÓXIMOS PASOS -->
-<div class="slide" data-label="Próximos pasos">
-  <div class="stagger wide">
-    <div class="eyebrow">Arranque del proyecto</div>
-    <h2>Próximos <em>pasos</em></h2>
-    <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
-      <div>
-        <h3 style="font-size:13px;margin-bottom:10px">Acciones inmediatas</h3>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Semana 1</div><div class="ms-title">Kickoff operativo</div><div class="ms-desc">Reunión de arranque entre FT, TC y referentes de cada programa. Alineación de expectativas y metodología.</div></div></div>
-        <div class="milestone"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Semana 1–2</div><div class="ms-title">Relevamiento por programa</div><div class="ms-desc">Reuniones 1:1 entre líder técnico ecloud y referente Aapresid por cada programa.</div></div></div>
-        <div class="milestone"><div class="ms-dot amber"></div><div class="ms-content"><div class="ms-date">Semana 2</div><div class="ms-title">Definición de backlog v0.5</div><div class="ms-desc">FV define el backlog priorizado para el Piloto Campillo. Validación con Gaspar.</div></div></div>
-        <div class="milestone"><div class="ms-dot amber"></div><div class="ms-content"><div class="ms-date">Semana 3</div><div class="ms-title">Setup de entornos</div><div class="ms-desc">Configuración de DEV, UAT y LIVE. Pipeline CI/CD. Primeros datos de prueba.</div></div></div>
-        <div class="milestone" style="border-bottom:none"><div class="ms-dot"></div><div class="ms-content"><div class="ms-date">Continuo</div><div class="ms-title">Ciclo semanal de entregables</div><div class="ms-desc">Un entregable funcional por semana. Status a Aapresid cada dos semanas.</div></div></div>
-      </div>
-      <div>
-        <div class="box green" style="margin-bottom:10px"><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">Pendientes de confirmación</div>
-          <div class="module-item">Calendario de Webinares por Regional</div>
-          <div class="module-item">Referentes Aapresid para Carbono y CaminoAR</div>
-          <div class="module-item">Líderes técnicos ecloud por programa (REM, Carbono, ASC)</div>
-          <div class="module-item">Alcance definitivo integración SRA</div>
-        </div>
-        <div class="box" style="padding:14px 16px">
-          <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:7px">Contacto de referencia</div>
-          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:1px">Tomás Coyos</div>
-          <div style="font-size:11px;color:var(--ink3)">Coordinación general — Aapresid</div>
-          <div class="rule" style="margin:8px 0"></div>
-          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:1px">Gaspar Mac</div>
-          <div style="font-size:11px;color:var(--ink3)">Líder de Innovación & TD — ecloud</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 12 TIMELINE -->
-<div class="slide slide-alt" data-label="Timeline">
-  <div class="stagger wide">
-    <div class="eyebrow">Roadmap temporal</div>
-    <h2>Timeline del <em>Proyecto</em></h2>
-    <div id="timeline-svg" style="width:100%;margin-top:clamp(6px,1.2vh,14px)"></div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;align-items:center">
-      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:9px;border-radius:2px;background:#F5E9C8;border:1px solid rgba(139,105,20,.5)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">DEV</span></div>
-      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:9px;border-radius:2px;background:#D0DDF5;border:1px solid rgba(26,58,94,.4)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">UAT</span></div>
-      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:9px;border-radius:2px;background:#C8DDB0;border:1px solid rgba(42,94,58,.5)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">LIVE</span></div>
-      <div style="display:flex;align-items:center;gap:5px"><div style="width:14px;height:9px;border-radius:2px;background:#EDE9DF;border:1px solid rgba(26,26,18,.2)"></div><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">Relevamiento</span></div>
-      <div style="display:flex;align-items:center;gap:5px;margin-left:4px"><svg width="10" height="10" viewBox="0 0 10 10"><polygon points="5,0 10,5 5,10 0,5" fill="#1A1A12" opacity=".6"/></svg><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">Hito</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- 13 CIERRE -->
-<div class="slide slide-cover" data-label="Cierre">
-  <div class="stagger" style="position:relative;z-index:2;width:100%;padding-top:clamp(8px,3vh,32px)">
-    <div class="eyebrow">ecloud × Aapresid — 2026</div>
-    <h1>Construyendo<br>el <em>sistema</em><br>del campo</h1>
-    <div class="rule"></div>
-    <p class="lead">Un estándar nacional de datos agronómicos, integrado, inteligente y pensado para los productores argentinos.</p>
-    <div style="margin-top:clamp(14px,2.5vh,28px);display:flex;gap:7px;flex-wrap:wrap">
-      <span class="tag">DataSet</span><span class="tag">CaminoAR</span><span class="tag">ENVAA</span><span class="tag">Integraciones</span>
-    </div>
-    <p style="margin-top:28px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);letter-spacing:.1em">DOCUMENTO CONFIDENCIAL — ecloud.agency — ABRIL 2026</p>
-  </div>
-</div>
-
-</div><!-- /deck -->
-
-<script>
-// ── Supabase Auth ──────────────────────────────────────────────
-const SUPA_URL = 'https://mlexxszeggmddrasggxe.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sZXh4c3plZ2dtZGRyYXNnZ3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDY3NjYsImV4cCI6MjA5MjI4Mjc2Nn0.aBg3Zuz0V7uSeU7CN3AgpCRNR0pHe8dYnhHvoDJhTMs';
-const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-const loginScreen = document.getElementById('login-screen');
-const logoutBtn   = document.getElementById('logout-btn');
-
-function showApp() {
-  loginScreen.classList.add('hidden');
-  logoutBtn.style.display = 'block';
-}
-function showLogin() {
-  loginScreen.classList.remove('hidden');
-  logoutBtn.style.display = 'none';
-}
-
-// Verificar sesión al cargar
-supa.auth.getSession().then(({ data: { session } }) => {
-  if (session) showApp(); else showLogin();
-});
-
-// Escuchar cambios de sesión
-supa.auth.onAuthStateChange((_event, session) => {
-  if (session) showApp(); else showLogin();
-});
-
-async function handleLogin() {
-  const email    = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  const btn      = document.getElementById('login-btn');
-  const errorEl  = document.getElementById('login-error');
-
-  errorEl.classList.remove('show');
-  btn.disabled = true;
-  btn.textContent = 'Ingresando…';
-
-  const { error } = await supa.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    errorEl.textContent = error.message === 'Invalid login credentials'
-      ? 'Email o contraseña incorrectos.'
-      : error.message;
-    errorEl.classList.add('show');
-    btn.disabled = false;
-    btn.textContent = 'Ingresar →';
-  }
-}
-
-async function handleLogout() {
-  await supa.auth.signOut();
-}
-
-// Enter key en el form
-document.getElementById('login-password').addEventListener('keydown', e => {
-  if (e.key === 'Enter') handleLogin();
-});
-document.getElementById('login-email').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('login-password').focus();
-});
-// ──────────────────────────────────────────────────────────────
-
-const slides = document.querySelectorAll('.slide');
-const dotsEl = document.getElementById('dots');
-const navCount = document.getElementById('navCount');
-const progress = document.getElementById('progress');
-const topLabel = document.getElementById('topLabel');
-let current = 0;
-const total = slides.length;
-
-slides.forEach((_,i)=>{
-  const d = document.createElement('button');
-  d.className = 'dot'+(i===0?' active':'');
-  d.onclick = ()=>goTo(i);
-  dotsEl.appendChild(d);
-});
-
-function updateUI(){
-  dotsEl.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===current));
-  navCount.textContent = String(current+1).padStart(2,'0')+'/'+String(total).padStart(2,'0');
-  progress.style.width = ((current+1)/total*100)+'%';
-  topLabel.textContent = slides[current].dataset.label||'';
-}
-function goTo(n){
-  if(n===current) return;
-  const prev=slides[current];
-  prev.classList.add('exit'); prev.classList.remove('active');
-  setTimeout(()=>prev.classList.remove('exit'),400);
-  current=Math.max(0,Math.min(total-1,n));
-  slides[current].classList.add('active');
-  updateUI();
-}
-function navigate(dir){ goTo(current+dir); }
-
-document.addEventListener('keydown',e=>{
-  if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();navigate(1);}
-  if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();navigate(-1);}
-});
-let tx=0;
-document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
-document.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-tx;
-  if(Math.abs(dx)>40)navigate(dx<0?1:-1);
-});
-
-const cursor=document.getElementById('cursor');
-const ring=document.getElementById('ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
-(function anim(){ rx+=(mx-rx)*.1;ry+=(my-ry)*.1;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(anim); })();
-
-updateUI();
-
-// ── Timeline Chart ───────────────────────────────────────────
-function drawTimeline() {
-  const el = document.getElementById('timeline-svg');
-  if (!el) return;
-  const W = 760, H = 200, padL = 76, padR = 8, padT = 26, padB = 54;
-  const cW = W - padL - padR;
-
-  // Acotado exactamente a los milestones del Linear: Apr 14 → May 20
-  const start = new Date(2026,3,14), end = new Date(2026,4,20);
-  const span  = end - start;
-  function xd(d){ return padL + ((d - start)/span)*cW; }
-
-  // Semanas como eje X
-  const weeks = [
-    [3,14,'14 Abr'], [3,21,'21 Abr'], [3,28,'28 Abr'],
-    [4,5,'5 May'],   [4,12,'12 May'], [4,19,'19 May'],
-  ];
-
-  // Solo DataSet — una fase por milestone para consistencia con el Linear
-  const tracks = [
-    { lbl:'DataSet', phases:[
-      { s:new Date(2026,3,14), e:new Date(2026,3,17), bg:'#C8DDB0', bc:'rgba(42,94,58,.5)',    tx:'Recibir data ✓' }, // 100% done
-      { s:new Date(2026,3,17), e:new Date(2026,3,24), bg:'#F5E9C8', bc:'rgba(139,105,20,.5)',  tx:'Carga de datos' }, // en curso
-      { s:new Date(2026,3,24), e:new Date(2026,3,30), bg:'#EDE9DF', bc:'rgba(26,26,18,.2)',    tx:'Análisis' },       // pendiente
-      { s:new Date(2026,3,30), e:new Date(2026,4,8),  bg:'#EDE9DF', bc:'rgba(26,26,18,.15)',   tx:'Datos cruzados' },
-      { s:new Date(2026,4,8),  e:new Date(2026,4,11), bg:'#EDE9DF', bc:'rgba(26,26,18,.15)',   tx:'Prueba' },
-      { s:new Date(2026,4,11), e:new Date(2026,4,20), bg:'#D0DDF5', bc:'rgba(26,58,94,.35)',   tx:'Evento EAR' },
-    ]},
-  ];
-
-  // Milestones centrados bajo cada fase del track DataSet
-  // Centro de cada barra = (inicio + fin) / 2
-  const milestones = [
-    { d:new Date(2026,3,15), lbl:'Recibir data Aapresid',          date:'Apr 17', c:'#2A5E3A', done:true  }, // centro Apr 14–17
-    { d:new Date(2026,3,20), lbl:'Carga de datos',                  date:'Apr 24', c:'#8B6914', done:false }, // centro Apr 17–24
-    { d:new Date(2026,3,27), lbl:'Análisis campaña self-service',   date:'Apr 30', c:'#8B6914', done:false }, // centro Apr 24–30
-    { d:new Date(2026,4,4),  lbl:'Consulta de datos cruzados',      date:'May 8',  c:'#1A3A5E', done:false }, // centro Apr 30–May 8
-    { d:new Date(2026,4,9),  lbl:'Prueba Aapresid interna',         date:'May 11', c:'#1A3A5E', done:false }, // centro May 8–11
-    { d:new Date(2026,4,15), lbl:'Evento Aapresid EAR',             date:'May 15', c:'#2A5E3A', done:false }, // centro May 11–20
-  ];
-
-  const tH = 26, tGap = 7;
-  const msY = padT + tracks.length*(tH+tGap) + 12;
-
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">`;
-
-  // Grid semanal
-  weeks.forEach(([mo,dy,nm]) => {
-    const x = xd(new Date(2026,mo,dy));
-    s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${msY+6}" stroke="rgba(26,26,18,.07)" stroke-width="1"/>`;
-    s += `<text x="${x+3}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" letter-spacing=".04em">${nm}</text>`;
-  });
-
-  // Tracks
-  tracks.forEach((tr, ti) => {
-    const y = padT + ti*(tH+tGap);
-    s += `<text x="${padL-6}" y="${y+tH/2+4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.45)" text-anchor="end" letter-spacing=".04em">${tr.lbl}</text>`;
-    s += `<rect x="${padL}" y="${y}" width="${cW}" height="${tH}" rx="3" fill="rgba(26,26,18,.03)"/>`;
-    tr.phases.forEach(ph => {
-      const x1 = xd(ph.s), x2 = xd(ph.e), pw = Math.max(x2-x1,2);
-      s += `<rect x="${x1}" y="${y+1}" width="${pw}" height="${tH-2}" rx="3" fill="${ph.bg}" stroke="${ph.bc}" stroke-width=".8"/>`;
-      // Sin texto dentro de las barras — la descripción va abajo en los diamantes
-    });
-  });
-
-  // Hoy line (Apr 20)
-  const todayX = xd(new Date(2026,3,20));
-  s += `<line x1="${todayX}" y1="${padT}" x2="${todayX}" y2="${msY+6}" stroke="#2A5E3A" stroke-width="1.5" stroke-dasharray="3,2" opacity=".55"/>`;
-  s += `<text x="${todayX+3}" y="${padT-4}" font-family="'DM Mono',monospace" font-size="8" fill="#2A5E3A" opacity=".8">Hoy</text>`;
-
-  // 6 Milestones — 2 filas alternadas debajo de los diamantes
-  milestones.forEach((ms, mi) => {
-    const x   = xd(ms.d);
-    const op  = ms.done ? '1' : '.75';
-    const row = mi % 2; // fila 0 = más cerca, fila 1 = más abajo
-    const lblY = msY + 17 + row * 14;
-
-    if (ms.done) {
-      s += `<polygon points="${x},${msY-6} ${x+6},${msY} ${x},${msY+6} ${x-6},${msY}" fill="${ms.c}"/>`;
-    } else {
-      s += `<polygon points="${x},${msY-5} ${x+5},${msY} ${x},${msY+5} ${x-5},${msY}" fill="none" stroke="${ms.c}" stroke-width="1.5" opacity="${op}"/>`;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aapresid × ecloud — Gobernanza del Proyecto 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    s += `<line x1="${x}" y1="${msY+6}" x2="${x}" y2="${lblY-5}" stroke="${ms.c}" stroke-width=".7" opacity="${op}" stroke-dasharray="2,1"/>`;
-    s += `<text x="${x}" y="${lblY}" font-family="'DM Mono',monospace" font-size="8.5" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}</text>`;
-    s += `<text x="${x}" y="${lblY+10}" font-family="'DM Mono',monospace" font-size="7.5" fill="${ms.c}" text-anchor="middle" opacity="${+op*.7}">${ms.date}</text>`;
-  });
 
-  s += '</svg>';
-  el.innerHTML = s;
-}
+    :root {
+      --bg: #F5F2EB;
+      --bg2: #EDE9DF;
+      --ink: #1A1A12;
+      --ink2: #3A3A2A;
+      --ink3: #6A6A50;
+      --ink4: #9A9A78;
+      --green: #2A5E3A;
+      --green-mid: #3D7A4F;
+      --green-light: #C8DDB0;
+      --green-pale: #EBF3E0;
+      --amber: #8B6914;
+      --amber-light: #F5E9C8;
+      --blue: #1A3A5E;
+      --blue-light: #D0DDF5;
+      --rule: rgba(26, 26, 18, 0.12);
+      --rule-strong: rgba(26, 26, 18, 0.25);
+    }
 
-drawTimeline();
-</script>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Instrument Sans', sans-serif;
+    }
+
+    @media (pointer:fine) {
+      body {
+        cursor: none
+      }
+    }
+
+    @media (pointer:coarse) {
+
+      .cursor,
+      .cursor-ring {
+        display: none !important
+      }
+    }
+
+    .cursor {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--green);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: multiply;
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(42, 94, 58, .4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform .12s ease-out;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: .04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px;
+    }
+
+    /* DECK */
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: clamp(60px, 9vh, 88px) clamp(18px, 6vw, 88px) clamp(60px, 8vh, 80px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(28px);
+      transition: opacity .65s cubic-bezier(.16, 1, .3, 1), transform .65s cubic-bezier(.16, 1, .3, 1);
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    .slide.exit {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+
+    /* STAGGER */
+    .stagger>* {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .slide.active .stagger>* {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide.active .stagger>*:nth-child(1) {
+      transition-delay: .07s
+    }
+
+    .slide.active .stagger>*:nth-child(2) {
+      transition-delay: .14s
+    }
+
+    .slide.active .stagger>*:nth-child(3) {
+      transition-delay: .21s
+    }
+
+    .slide.active .stagger>*:nth-child(4) {
+      transition-delay: .28s
+    }
+
+    .slide.active .stagger>*:nth-child(5) {
+      transition-delay: .35s
+    }
+
+    .slide.active .stagger>*:nth-child(6) {
+      transition-delay: .42s
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px clamp(14px, 4vw, 40px);
+      z-index: 100;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .logo-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-badge svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .logo-name {
+      font-family: 'Fraunces', serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -.02em;
+      white-space: nowrap;
+    }
+
+    .logo-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--rule-strong);
+      flex-shrink: 0;
+    }
+
+    .logo-partner {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink3);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slide-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    @media(max-width:520px) {
+
+      .logo-sep,
+      .logo-partner {
+        display: none
+      }
+    }
+
+    /* PROGRESS */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--green);
+      z-index: 200;
+      transition: width .5s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--ink);
+      border-radius: 100px;
+      padding: 5px 12px;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: rgba(255, 255, 255, .5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      transition: color .2s;
+    }
+
+    .nav-btn:hover {
+      color: #fff
+    }
+
+    .nav-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .4);
+      min-width: 38px;
+      text-align: center;
+    }
+
+    /* DOTS */
+    .dots {
+      position: fixed;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 100;
+    }
+
+    .dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(26, 26, 18, .2);
+      cursor: pointer;
+      transition: all .3s;
+      border: none;
+    }
+
+    .dot.active {
+      background: var(--green);
+      transform: scale(1.6);
+    }
+
+    @media(max-width:480px) {
+      .dots {
+        display: none
+      }
+    }
+
+    /* TYPE */
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: clamp(10px, 1.8vh, 18px);
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 18px;
+      height: 1px;
+      background: var(--green-mid);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(34px, 7vw, 86px);
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.035em;
+      color: var(--ink);
+      margin-bottom: clamp(14px, 2vh, 22px);
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(22px, 3.8vw, 50px);
+      font-weight: 600;
+      line-height: 1.0;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      margin-bottom: clamp(8px, 1.2vh, 14px);
+    }
+
+    h2 em {
+      font-style: italic;
+      color: var(--green);
+    }
+
+    h3 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(13px, 1.4vw, 17px);
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .lead {
+      font-size: clamp(13px, 1.4vw, 17px);
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--ink2);
+      max-width: 520px;
+    }
+
+    .body {
+      font-size: clamp(11px, 1vw, 13px);
+      line-height: 1.7;
+      color: var(--ink3);
+      font-weight: 400;
+    }
+
+    /* LAYOUT */
+    .wide {
+      width: 100%;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 3.5vw, 48px);
+      width: 100%;
+      align-items: start;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 1.2vw, 18px);
+      width: 100%;
+    }
+
+    .four-col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: clamp(7px, 1vw, 14px);
+      width: 100%;
+    }
+
+    @media(max-width:700px) {
+      .two-col {
+        grid-template-columns: 1fr
+      }
+
+      .three-col {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .four-col {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:400px) {
+
+      .three-col,
+      .four-col {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* UTILS */
+    .rule {
+      width: 100%;
+      height: 1px;
+      background: var(--rule);
+      margin: clamp(8px, 1.2vh, 18px) 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 100px;
+      border: 1px solid var(--rule-strong);
+      color: var(--ink3);
+      background: transparent;
+    }
+
+    .tag.green {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-pale);
+    }
+
+    .tag.amber {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: var(--amber-light);
+    }
+
+    .tag.blue {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: var(--blue-light);
+    }
+
+    /* PERSON */
+    .person {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: clamp(7px, 1vh, 12px) 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .person:last-child {
+      border-bottom: none
+    }
+
+    .person-avatar {
+      width: 33px;
+      height: 33px;
+      border-radius: 9px;
+      background: var(--green-pale);
+      border: 1px solid var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .person-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .person-name {
+      font-size: clamp(11px, 1vw, 13px);
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 1px;
+    }
+
+    .person-role {
+      font-size: clamp(10px, .9vw, 11px);
+      color: var(--ink3);
+      line-height: 1.4;
+    }
+
+    .person-org {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--ink4);
+      margin-top: 1px;
+      letter-spacing: .04em;
+    }
+
+    /* BOX */
+    .box {
+      background: var(--bg2);
+      border: 1px solid var(--rule-strong);
+      border-radius: 12px;
+      padding: clamp(12px, 1.8vw, 22px) clamp(12px, 1.8vw, 22px);
+    }
+
+    .box.green {
+      background: var(--green-pale);
+      border-color: var(--green-light);
+    }
+
+    .box.amber {
+      background: var(--amber-light);
+      border-color: rgba(139, 105, 20, .25);
+    }
+
+    .box.blue {
+      background: var(--blue-light);
+      border-color: rgba(26, 58, 94, .2);
+    }
+
+    /* MILESTONE */
+    .milestone {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: clamp(7px, 1vh, 12px) 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .milestone:last-child {
+      border-bottom: none
+    }
+
+    .ms-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+      margin-top: 4px;
+      box-shadow: 0 0 0 3px var(--green-pale);
+    }
+
+    .ms-dot.amber {
+      background: var(--amber);
+      box-shadow: 0 0 0 3px var(--amber-light);
+    }
+
+    .ms-dot.blue {
+      background: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-light);
+    }
+
+    .ms-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ms-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--ink4);
+      letter-spacing: .08em;
+      margin-bottom: 1px;
+    }
+
+    .ms-title {
+      font-size: clamp(11px, 1vw, 13px);
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .ms-desc {
+      font-size: clamp(10px, .9vw, 12px);
+      color: var(--ink3);
+      line-height: 1.5;
+    }
+
+    /* MODULE */
+    .module-header {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .module-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    .module-item {
+      font-size: clamp(10px, .95vw, 12px);
+      color: var(--ink2);
+      line-height: 1.5;
+      padding: 3px 0 3px 13px;
+      position: relative;
+    }
+
+    .module-item::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--ink4);
+    }
+
+    /* ENV CARDS */
+    .env-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(10px, 1.5vw, 18px);
+      width: 100%;
+      margin-top: clamp(10px, 1.5vh, 16px);
+    }
+
+    @media(max-width:680px) {
+      .env-cards {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .env-card {
+      border-radius: 12px;
+      padding: clamp(12px, 1.8vw, 20px);
+      border: 1px solid var(--rule-strong);
+      background: var(--bg2);
+    }
+
+    .env-card.dev {
+      border-top: 3px solid var(--amber);
+    }
+
+    .env-card.uat {
+      border-top: 3px solid var(--blue);
+    }
+
+    .env-card.live {
+      border-top: 3px solid var(--green);
+    }
+
+    .env-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .env-dot-lg {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .env-dot-lg.dev {
+      background: var(--amber)
+    }
+
+    .env-dot-lg.uat {
+      background: var(--blue)
+    }
+
+    .env-dot-lg.live {
+      background: var(--green)
+    }
+
+    .env-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .env-lbl.dev {
+      color: var(--amber)
+    }
+
+    .env-lbl.uat {
+      color: var(--blue)
+    }
+
+    .env-lbl.live {
+      color: var(--green)
+    }
+
+    .env-desc {
+      font-size: clamp(10px, .95vw, 12px);
+      color: var(--ink3);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .env-url-block {
+      margin-bottom: 8px;
+    }
+
+    .env-url-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      margin-bottom: 3px;
+    }
+
+    .env-url {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 7px;
+      padding: 5px 9px;
+      margin-bottom: 4px;
+      text-decoration: none;
+      transition: border-color .2s;
+    }
+
+    .env-url:hover {
+      border-color: var(--green)
+    }
+
+    .env-url-panel {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--ink4);
+      letter-spacing: .06em;
+      flex-shrink: 0;
+      min-width: 34px;
+    }
+
+    .env-url-text {
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(9px, .9vw, 11px);
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .env-url-text.ph {
+      color: var(--ink4);
+      font-style: italic;
+    }
+
+    .env-creds {
+      background: var(--bg);
+      border: 1px solid var(--rule);
+      border-radius: 7px;
+      padding: 7px 9px;
+      margin-top: 6px;
+    }
+
+    .env-creds-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--ink4);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .cred-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+
+    .cred-row:last-child {
+      margin-bottom: 0
+    }
+
+    .cred-key {
+      color: var(--ink3);
+      font-size: 10px;
+    }
+
+    .cred-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--ink);
+      background: var(--bg2);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+    }
+
+    .cred-val.ph {
+      color: var(--ink4);
+      font-style: italic;
+      border-style: dashed;
+    }
+
+    /* VERSION BADGE */
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px 3px 5px;
+      border-radius: 100px;
+      background: var(--ink);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .version-num {
+      background: var(--green);
+      color: white;
+      padding: 1px 6px;
+      border-radius: 100px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    /* LOGIN */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--ink);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    #login-screen.hidden {
+      display: none;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .login-logo-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-logo-badge svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .login-logo-name {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: -.02em;
+    }
+
+    .login-logo-sep {
+      width: 1px;
+      height: 18px;
+      background: rgba(255, 255, 255, .15);
+    }
+
+    .login-logo-partner {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .35);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .login-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 700;
+      color: #fff;
+      line-height: .95;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+    }
+
+    .login-title em {
+      font-style: italic;
+      color: #A8CCAA;
+    }
+
+    .login-sub {
+      font-size: 13px;
+      color: rgba(255, 255, 255, .45);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .login-field {
+      margin-bottom: 14px;
+    }
+
+    .login-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .35);
+      margin-bottom: 7px;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-family: 'Instrument Sans', sans-serif;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .login-input:focus {
+      border-color: rgba(168, 204, 170, .5);
+    }
+
+    .login-input::placeholder {
+      color: rgba(255, 255, 255, .2);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--green);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Instrument Sans', sans-serif;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background .2s;
+    }
+
+    .login-btn:hover {
+      background: var(--green-mid);
+    }
+
+    .login-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .login-error {
+      font-size: 12px;
+      color: #F4A4A4;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: .04em;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .login-error.show {
+      display: block;
+    }
+
+    .login-footer {
+      margin-top: 32px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: rgba(255, 255, 255, .15);
+      letter-spacing: .08em;
+      text-align: center;
+    }
+
+    /* LOGOUT BTN */
+    .logout-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink4);
+      background: none;
+      border: 1px solid var(--rule);
+      border-radius: 100px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .logout-btn:hover {
+      color: var(--ink);
+      border-color: var(--rule-strong);
+    }
+
+    /* SCROLL */
+    .slide-scroll {
+      overflow-y: auto;
+      max-height: calc(100vh - clamp(140px, 20vh, 210px));
+      padding-right: 4px;
+      width: 100%;
+    }
+
+    .slide-scroll::-webkit-scrollbar {
+      width: 2px
+    }
+
+    .slide-scroll::-webkit-scrollbar-thumb {
+      background: var(--rule-strong);
+      border-radius: 1px
+    }
+
+    /* SLIDE VARIANTS */
+    .slide-cover {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    .slide-cover .eyebrow {
+      color: var(--green-light);
+    }
+
+    .slide-cover .eyebrow::before {
+      background: var(--green-light);
+    }
+
+    .slide-cover h1 {
+      color: #fff;
+    }
+
+    .slide-cover h1 em {
+      color: #A8CCAA;
+    }
+
+    .slide-cover .lead {
+      color: rgba(255, 255, 255, .65);
+    }
+
+    .slide-cover .tag {
+      border-color: rgba(255, 255, 255, .2);
+      color: rgba(255, 255, 255, .5);
+    }
+
+    .slide-cover .rule {
+      background: rgba(255, 255, 255, .1);
+    }
+
+    .slide-alt {
+      background: var(--bg2);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="login-logo-badge">
+          <svg viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" opacity=".5" />
+            <path d="M10 4C10 4 14 6.5 14 10C14 13.5 10 16 10 16" stroke="white" stroke-width="1.5"
+              stroke-linecap="round" />
+            <circle cx="10" cy="10" r="2" fill="white" />
+          </svg>
+        </div>
+        <span class="login-logo-name">ecloud</span>
+        <div class="login-logo-sep"></div>
+        <span class="login-logo-partner">Aapresid</span>
+      </div>
+      <h1 class="login-title">Gobernanza<br><em>2026</em></h1>
+      <p class="login-sub">Documento confidencial. Ingresá con tu cuenta autorizada.</p>
+      <div class="login-field">
+        <label class="login-label" for="login-email">Email</label>
+        <input class="login-input" type="email" id="login-email" placeholder="tu@email.com" autocomplete="email" />
+      </div>
+      <div class="login-field">
+        <label class="login-label" for="login-password">Contraseña</label>
+        <input class="login-input" type="password" id="login-password" placeholder="••••••••"
+          autocomplete="current-password" />
+      </div>
+      <button class="login-btn" id="login-btn" onclick="handleLogin()">Ingresar →</button>
+      <p class="login-error" id="login-error"></p>
+      <p class="login-footer">DOCUMENTO CONFIDENCIAL — ABRIL 2026</p>
+    </div>
+  </div>
+
+  <div class="grain"></div>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="ring"></div>
+  <div class="progress-bar" id="progress"></div>
+
+  <div class="topbar">
+    <div class="logo-area">
+      <div class="logo-badge">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="white" stroke-width="1.5" opacity=".5" />
+          <path d="M10 4C10 4 14 6.5 14 10C14 13.5 10 16 10 16" stroke="white" stroke-width="1.5"
+            stroke-linecap="round" />
+          <circle cx="10" cy="10" r="2" fill="white" />
+        </svg>
+      </div>
+      <span class="logo-name">ecloud</span>
+      <div class="logo-sep"></div>
+      <span class="logo-partner">Aapresid — Proyecto DataSet</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="slide-label" id="topLabel">Gobernanza</span>
+      <button class="logout-btn" id="logout-btn" onclick="handleLogout()" style="display:none">Salir</button>
+    </div>
+  </div>
+
+  <div class="dots" id="dots"></div>
+  <div class="nav">
+    <button class="nav-btn" onclick="navigate(-1)">←</button>
+    <span class="nav-count" id="navCount">01/12</span>
+    <button class="nav-btn" onclick="navigate(1)">→</button>
+  </div>
+
+  <div class="deck" id="deck">
+
+    <!-- 01 COVER -->
+    <div class="slide slide-cover active" data-label="Inicio">
+      <div class="stagger"
+        style="position:relative;z-index:2;width:100%;max-width:860px;padding-top:clamp(8px,3vh,32px)">
+        <div class="eyebrow">Documento de Gobernanza — Confidencial</div>
+        <h1>Proyecto<br><em>DataSet</em><br>& Programas</h1>
+        <div class="rule"></div>
+        <p class="lead">Estructura de equipo, entregables por versión, hitos públicos y modelo de coordinación para el
+          desarrollo de la plataforma digital de Aapresid.</p>
+        <div style="margin-top:clamp(14px,2.5vh,28px);display:flex;gap:7px;flex-wrap:wrap">
+          <span class="tag">DataSet</span><span class="tag">CaminoAR</span><span class="tag">ENVAA</span><span
+            class="tag">Integraciones</span><span class="tag">ecloud × Nativas</span>
+        </div>
+        <p
+          style="margin-top:22px;font-size:10px;color:rgba(255,255,255,.2);font-family:'DM Mono',monospace;letter-spacing:.08em">
+          ABRIL 2026 — v1.0</p>
+      </div>
+    </div>
+
+    <!-- 02 ROL GASPAR -->
+    <div class="slide slide-alt" data-label="Liderazgo">
+      <div class="stagger wide">
+        <div class="eyebrow">Rol estratégico</div>
+        <h2>Líder de <em>Innovación</em></h2>
+        <div class="two-col" style="margin-top:clamp(10px,1.8vh,22px)">
+          <div>
+            <div class="box green" style="margin-bottom:12px">
+              <div
+                style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">
+                Gaspar Mac — ecloud</div>
+              <div
+                style="font-size:clamp(14px,1.6vw,19px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.2">
+                Líder de Innovación<br>& Transformación Digital</div>
+              <p class="body">Responsable de la visión del producto, arquitectura funcional y alineación estratégica
+                entre Aapresid y ecloud. Referente de decisiones tecnológicas y punto de escalación.</p>
+            </div>
+            <div class="body" style="max-width:400px"><strong style="color:var(--ink)">¿Por qué este rol?</strong> Para
+              que ecloud tenga legitimidad en la sala, Gaspar opera como líder de transformación digital embebido en el
+              proyecto — no como proveedor externo. Esto habilita decisiones más rápidas y mayor confianza del equipo
+              Aapresid.</div>
+          </div>
+          <div>
+            <h3 style="font-size:13px;margin-bottom:10px">Responsabilidades del rol</h3>
+            <div class="person" style="padding:9px 0">
+              <div class="ms-dot" style="margin-top:3px"></div>
+              <div>
+                <div class="person-name">Visión de producto</div>
+                <div class="person-role">Define qué se construye, para quién y en qué orden.</div>
+              </div>
+            </div>
+            <div class="person" style="padding:9px 0">
+              <div class="ms-dot" style="margin-top:3px"></div>
+              <div>
+                <div class="person-name">Arquitectura funcional</div>
+                <div class="person-role">Diseña la estructura de módulos, versiones y entregables.</div>
+              </div>
+            </div>
+            <div class="person" style="padding:9px 0">
+              <div class="ms-dot" style="margin-top:3px"></div>
+              <div>
+                <div class="person-name">Alineación estratégica</div>
+                <div class="person-role">Puente entre necesidades de Aapresid y capacidades del equipo de desarrollo.
+                </div>
+              </div>
+            </div>
+            <div class="person" style="padding:9px 0">
+              <div class="ms-dot" style="margin-top:3px"></div>
+              <div>
+                <div class="person-name">Gobernanza del proyecto</div>
+                <div class="person-role">Preside la PMO. Define reuniones, reportes y escalación.</div>
+              </div>
+            </div>
+            <div class="person" style="padding:9px 0;border-bottom:none">
+              <div class="ms-dot" style="margin-top:3px"></div>
+              <div>
+                <div class="person-name">Innovación continua</div>
+                <div class="person-role">Identifica oportunidades de mejora tecnológica e IA.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 EQUIPO -->
+    <div class="slide" data-label="Equipo">
+      <div class="stagger wide">
+        <div class="eyebrow">Estructura de equipo</div>
+        <h2>Equipo <em>ecloud × Nativas</em> × Aapresid</h2>
+        <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
+          <div>
+            <div
+              style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-mid);margin-bottom:7px">
+              — ecloud & Nativas</div>
+            <div class="person">
+              <div class="person-avatar">GM</div>
+              <div class="person-info">
+                <div class="person-name">Gaspar Mac</div>
+                <div class="person-role">Líder de Innovación & Transformación Digital</div>
+                <div class="person-org">ecloud</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar">FT</div>
+              <div class="person-info">
+                <div class="person-name">Francisco Tagliarini</div>
+                <div class="person-role">Project Manager — coordinación y seguimiento</div>
+                <div class="person-org">ecloud</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar">FV</div>
+              <div class="person-info">
+                <div class="person-name">Felipe Valor</div>
+                <div class="person-role">Product Manager — roadmap y backlog</div>
+                <div class="person-org">ecloud</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar">LB</div>
+              <div class="person-info">
+                <div class="person-name">Lara Brizio</div>
+                <div class="person-role">Líder de CaminoAR</div>
+                <div class="person-org">Nativas</div>
+              </div>
+            </div>
+            <div class="person" style="border-bottom:none">
+              <div class="person-avatar">TDL</div>
+              <div class="person-info">
+                <div class="person-name">Tomás De Lorenzi</div>
+                <div class="person-role">Líder de ENVAA</div>
+                <div class="person-org">Nativas</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-mid);margin-bottom:7px">
+              — Aapresid</div>
+            <div class="person">
+              <div class="person-avatar"
+                style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">TC</div>
+              <div class="person-info">
+                <div class="person-name">Tomás Coyos</div>
+                <div class="person-role">Coordinación general + Integraciones externas</div>
+                <div class="person-org">Aapresid</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar"
+                style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">CB</div>
+              <div class="person-info">
+                <div class="person-name">Carla Biasutti</div>
+                <div class="person-role">Análisis de rendimiento de campañas e integración con Conecta</div>
+                <div class="person-org">Aapresid</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar"
+                style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">AM</div>
+              <div class="person-info">
+                <div class="person-name">Andrés Madias</div>
+                <div class="person-role">Integración experimental + revisión de salidas técnicas</div>
+                <div class="person-org">Aapresid</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar"
+                style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">EN</div>
+              <div class="person-info">
+                <div class="person-name">Eugenia Niccia</div>
+                <div class="person-role">Integración Red de Manejo de Plagas (REM)</div>
+                <div class="person-org">Aapresid</div>
+              </div>
+            </div>
+            <div class="person" style="border-bottom:none">
+              <div class="person-avatar"
+                style="background:var(--blue-light);border-color:rgba(26,58,94,.3);color:var(--blue)">RB</div>
+              <div class="person-info">
+                <div class="person-name">Rocío Belda</div>
+                <div class="person-role">Indicadores de sustentabilidad y certificaciones</div>
+                <div class="person-org">Aapresid</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 ALCANCE -->
+    <div class="slide slide-alt" data-label="Alcance">
+      <div class="stagger wide">
+        <div class="eyebrow">Alcance del producto</div>
+        <h2>Módulos del <em>Sistema</em></h2>
+        <div class="three-col" style="margin-top:clamp(8px,1.5vh,18px)">
+          <div class="box">
+            <div class="module-header">Panel Productor</div>
+            <div class="module-item">Registro y login</div>
+            <div class="module-item">Módulo de Campaña — onboarding XLS, validación, informes</div>
+            <div class="module-item">Módulo de Establecimiento</div>
+            <div class="module-item">Módulo de Programas</div>
+            <div class="module-item">Módulo de Integraciones</div>
+            <div class="module-item">Módulo de Informes IA</div>
+          </div>
+          <div class="box">
+            <div class="module-header">Panel ATR</div>
+            <div class="module-item">Productores asignados / solicitados</div>
+            <div class="module-item">Carga XLS individual y masiva</div>
+            <div class="module-item">Gestión de validación de variables</div>
+            <div class="module-item">Informe de rendimiento regional y particular</div>
+          </div>
+          <div class="box">
+            <div class="module-header">Panel Admin</div>
+            <div class="module-item">Productores / ATR / Operadores</div>
+            <div class="module-item">Campañas — validaciones e informes</div>
+            <div class="module-item">Establecimientos / Variables / Programas</div>
+            <div class="module-item">Integraciones</div>
+            <div class="module-item">API (Webservice)</div>
+            <div class="module-item">Informes IA</div>
+          </div>
+        </div>
+        <div class="rule"></div>
+        <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <div
+              style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green-mid);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+              Programas</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag green">CaminoAR</span><span
+                class="tag green">REM</span><span class="tag green">Inf. Experimental</span><span
+                class="tag green">Carbono</span><span class="tag green">ASC</span></div>
+          </div>
+          <div>
+            <div
+              style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+              Otros</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag amber">ENVAA</span><span
+                class="tag amber">SRA</span></div>
+          </div>
+          <div>
+            <div
+              style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+              Integraciones</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag blue">GeoAgro</span><span
+                class="tag blue">Albor</span><span class="tag blue">RindePlus</span><span class="tag blue">Puma</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 05 VERSIONES -->
+    <div class="slide" data-label="Versiones">
+      <div class="stagger wide">
+        <div class="eyebrow">Entregables por versión</div>
+        <h2>Roadmap de <em>Versiones</em></h2>
+        <div class="slide-scroll" style="margin-top:clamp(8px,1.2vh,14px)">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px">
+            <div class="box" style="border-left:3px solid var(--amber)">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px">
+                <span class="version-badge"><span class="version-num">v0.1</span> Alpha</span><span
+                  class="tag amber">DEV</span></div>
+              <p class="body" style="margin-bottom:6px">Estructura base. Solo equipo de desarrollo.</p>
+              <div class="module-item">Auth (registro + login)</div>
+              <div class="module-item">Carga XLS — Campaña básica</div>
+              <div class="module-item">CRUD Establecimientos</div>
+              <div class="module-item">Panel Admin base</div>
+            </div>
+            <div class="box" style="border-left:3px solid var(--blue)">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px">
+                <span class="version-badge"><span class="version-num">v0.5</span> Beta UAT</span><span
+                  class="tag blue">UAT</span></div>
+              <p class="body" style="margin-bottom:6px">Piloto interno. Primer testeo con actores clave.</p>
+              <div class="module-item">Flujo completo Campaña (Productor)</div>
+              <div class="module-item">Panel ATR operativo</div>
+              <div class="module-item">Validación de variables</div>
+              <div class="module-item">Informe de rendimiento v1</div>
+              <div class="module-item">CaminoAR — módulo básico</div>
+              <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: Piloto
+                Campillo</div>
+            </div>
+            <div class="box" style="border-left:3px solid var(--green)">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px">
+                <span class="version-badge"><span class="version-num">v1.0</span> Release</span><span
+                  class="tag green">LIVE</span></div>
+              <p class="body" style="margin-bottom:6px">Primera versión estable. Acceso público.</p>
+              <div class="module-item">Paneles Productor + ATR completos</div>
+              <div class="module-item">CaminoAR integrado · REM</div>
+              <div class="module-item">Informes IA v1 · API básica</div>
+              <div class="module-item">API de clima</div>
+              <div class="module-item">RindePlus</div>
+              <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: EAR +
+                Webinares</div>
+            </div>
+            <div class="box" style="border-left:3px solid var(--green)">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px">
+                <span class="version-badge"><span class="version-num">v1.5</span> Integraciones</span><span
+                  class="tag green">LIVE</span></div>
+              <p class="body" style="margin-bottom:6px">Integraciones externas y programas adicionales.</p>
+              <div class="module-item">Albor / Puma</div>
+              <div class="module-item">Inf. Experimental · Carbono · ASC</div>
+              <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Hito: Congreso
+                Aapresid</div>
+            </div>
+            <div class="box" style="border-left:3px solid var(--green)">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:4px">
+                <span class="version-badge"><span class="version-num">v2.0</span> IA & Escala</span><span
+                  class="tag green">LIVE</span></div>
+              <p class="body" style="margin-bottom:6px">Plataforma completa con IA avanzada y ENVAA integrado.</p>
+              <div class="module-item">Informes IA avanzados multi-campaña</div>
+              <div class="module-item">ENVAA + SRA integrados</div>
+              <div class="module-item">API completa documentada</div>
+              <div class="module-item">Dashboard sustentabilidad</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 06 ENTORNOS & ACCESOS -->
+    <div class="slide slide-alt" data-label="Entornos & Accesos">
+      <div class="stagger wide">
+        <div class="eyebrow">Accesos al sistema</div>
+        <h2>Entornos & <em>URLs</em></h2>
+        <div class="env-cards">
+
+          <!-- UAT -->
+          <div class="env-card uat">
+            <div class="env-header">
+              <div class="env-dot-lg uat"></div><span class="env-lbl uat">UAT</span>
+            </div>
+            <p class="env-desc">Testing y demos con actores. Datos reales de prueba. Acceso autorizado.</p>
+            <div class="env-url-block">
+              <div class="env-url-lbl">DataSet</div>
+              <a class="env-url" href="https://v0-uat-aapresid-dataset.vercel.app/" target="_blank"><span
+                  class="env-url-panel">App →</span><span
+                  class="env-url-text">v0-uat-aapresid-dataset.vercel.app</span></a>
+            </div>
+            <div class="env-url-block">
+              <div class="env-url-lbl">CaminoAR</div>
+              <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span
+                  class="env-url-text ph">URL por definir</span></div>
+            </div>
+            <div class="env-url-block">
+              <div class="env-url-lbl">ENVAA</div>
+              <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span
+                  class="env-url-text ph">URL por definir</span></div>
+            </div>
+            <div class="env-creds">
+              <div class="env-creds-title">Credenciales</div>
+              <div class="cred-row"><span class="cred-key">ATR</span><span
+                  class="cred-val">ren.costamagna@gmail.com</span></div>
+              <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span
+                  class="cred-val">123456789</span></div>
+              <div class="cred-row"><span class="cred-key">Productor</span><span
+                  class="cred-val">renzo.costamagna+1@ecloudsolutions.com</span></div>
+              <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span
+                  class="cred-val">123456789</span></div>
+            </div>
+          </div>
+
+          <!-- LIVE -->
+          <div class="env-card live">
+            <div class="env-header">
+              <div class="env-dot-lg live"></div><span class="env-lbl live">LIVE</span>
+            </div>
+            <p class="env-desc">Acceso público con datos reales de productores. Versión estable validada.</p>
+            <div class="env-url-block">
+              <div class="env-url-lbl">DataSet</div>
+              <a class="env-url" href="https://v0-aapresid-dataset.vercel.app/" target="_blank"><span
+                  class="env-url-panel">App →</span><span class="env-url-text">v0-aapresid-dataset.vercel.app</span></a>
+            </div>
+            <div class="env-url-block">
+              <div class="env-url-lbl">CaminoAR</div>
+              <a class="env-url" href="https://www.caminoar.com" target="_blank"><span class="env-url-panel">App
+                  →</span><span class="env-url-text">www.caminoar.com</span></a>
+            </div>
+            <div class="env-url-block">
+              <div class="env-url-lbl">ENVAA</div>
+              <div class="env-url" style="opacity:.45;pointer-events:none"><span class="env-url-panel">App</span><span
+                  class="env-url-text ph">URL por definir</span></div>
+            </div>
+            <div class="env-creds">
+              <div class="env-creds-title">Credenciales</div>
+              <div class="cred-row"><span class="cred-key">Admin</span><span class="cred-val">gaspar@nativas.ar</span>
+              </div>
+              <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span
+                  class="cred-val">123456789</span></div>
+              <div class="cred-row"><span class="cred-key">ATR</span><span
+                  class="cred-val">ren.costamagna@gmail.com</span></div>
+              <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span
+                  class="cred-val">123456789</span></div>
+              <div class="cred-row"><span class="cred-key">Productor</span><span
+                  class="cred-val">renzo.costamagna@ecloudsolutions.com</span></div>
+              <div class="cred-row"><span class="cred-key" style="opacity:.45">↳ pass</span><span
+                  class="cred-val">12345678</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 07 GOBERNANZA -->
+    <div class="slide" data-label="Gobernanza">
+      <div class="stagger wide">
+        <div class="eyebrow">Modelo de gobernanza</div>
+        <h2>Estructura de <em>Coordinación</em></h2>
+        <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
+          <div>
+            <h3 style="font-size:13px;margin-bottom:10px">Reuniones de seguimiento</h3>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">SEMANAL — Interno ecloud</div>
+                <div class="ms-title">Entregable por semana</div>
+                <div class="ms-desc">Revisión de avances por proyecto: DataSet, programas, integraciones, ENVAA, SRA.
+                  Liderado por Francisco Tagliarini (PM).</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot amber"></div>
+              <div class="ms-content">
+                <div class="ms-date">QUINCENAL — ecloud × Aapresid</div>
+                <div class="ms-title">Status por proyecto</div>
+                <div class="ms-desc">Reporte a Tomás Coyos y coordinadores Aapresid. Revisión de bloqueos y próximos
+                  pasos. Liderado por Gaspar Mac.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot blue"></div>
+              <div class="ms-content">
+                <div class="ms-date">SEGÚN NECESIDAD — Operativas</div>
+                <div class="ms-title">Reuniones de programa</div>
+                <div class="ms-desc">Coordinadas entre el líder ecloud del módulo y el referente Aapresid
+                  correspondiente. Sin intermediarios.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:13px;margin-bottom:10px">Líderes por frente</h3>
+            <div class="person">
+              <div class="person-avatar">FT</div>
+              <div class="person-info">
+                <div class="person-name">Francisco Tagliarini</div>
+                <div class="person-role">Gestión del proyecto — coordinación, seguimiento, reportes</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar">FV</div>
+              <div class="person-info">
+                <div class="person-name">Felipe Valor</div>
+                <div class="person-role">Gestión del producto DataSet — backlog, priorización, UX</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar">LB</div>
+              <div class="person-info">
+                <div class="person-name">Lara Brizio</div>
+                <div class="person-role">Líder CaminoAR — dominio del programa, integración</div>
+              </div>
+            </div>
+            <div class="person">
+              <div class="person-avatar">TDL</div>
+              <div class="person-info">
+                <div class="person-name">Tomás De Lorenzi</div>
+                <div class="person-role">Líder ENVAA — estándar de variables, relevamiento</div>
+              </div>
+            </div>
+            <div class="person" style="border-bottom:none">
+              <div class="person-avatar"
+                style="background:var(--blue-light);color:var(--blue);border-color:rgba(26,58,94,.3)">TC</div>
+              <div class="person-info">
+                <div class="person-name">Tomás Coyos</div>
+                <div class="person-role">Coordinación Aapresid + Integraciones externas</div>
+              </div>
+            </div>
+            <div class="box" style="margin-top:10px;padding:10px 14px">
+              <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:4px">Escalación</div>
+              <p class="body">Cualquier decisión de alcance, presupuesto o estrategia se escala a Gaspar Mac (ecloud) y
+                Tomás Coyos (Aapresid).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 08 PROGRAMAS -->
+    <div class="slide slide-alt" data-label="Programas">
+      <div class="stagger wide">
+        <div class="eyebrow">Pilar de programas</div>
+        <h2>Programas <em>Aapresid</em></h2>
+        <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
+          <div>
+            <p class="body" style="margin-bottom:10px;max-width:400px">Cada programa tiene un referente de dominio
+              (Aapresid) y un líder de desarrollo (ecloud).</p>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Programa</div>
+                <div class="ms-title">CaminoAR</div>
+                <div class="ms-desc">Líder: <strong>Lara Brizio (Nativas)</strong>. Referente Aapresid: por confirmar.
+                </div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Programa</div>
+                <div class="ms-title">REM — Red de Manejo de Plagas</div>
+                <div class="ms-desc">Referente: <strong>Eugenia Niccia</strong>. Líder técnico ecloud: a asignar.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Programa</div>
+                <div class="ms-title">Información Experimental</div>
+                <div class="ms-desc">Referente: <strong>Andrés Madias</strong>. Líder técnico ecloud: a asignar.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Programa</div>
+                <div class="ms-title">Carbono</div>
+                <div class="ms-desc">Referente Aapresid: por confirmar. Líder técnico ecloud: a asignar.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Programa</div>
+                <div class="ms-title">ASC — Sustentabilidad</div>
+                <div class="ms-desc">Referente: <strong>Rocío Belda</strong>. Líder técnico ecloud: a asignar.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:13px;margin-bottom:10px">Otros proyectos</h3>
+            <div class="box amber" style="margin-bottom:10px">
+              <div
+                style="font-family:'DM Mono',monospace;font-size:10px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+                ENVAA</div>
+              <div style="font-size:clamp(12px,1.2vw,14px);font-weight:600;color:var(--ink);margin-bottom:4px">Estándar
+                Nacional de Variables Agronómicas</div>
+              <p class="body">Líder: <strong>Tomás De Lorenzi (Nativas)</strong>. Estandarización transversal a todos
+                los programas.</p>
+            </div>
+            <div class="box blue" style="margin-bottom:10px">
+              <div
+                style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+                SRA</div>
+              <div style="font-size:clamp(12px,1.2vw,14px);font-weight:600;color:var(--ink);margin-bottom:4px">Sociedad
+                Rural Argentina</div>
+              <p class="body">Coordinación: <strong>Tomás Coyos (Aapresid)</strong>. Líder técnico ecloud: a definir.
+              </p>
+            </div>
+            <div class="box">
+              <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:5px">Proceso por programa</div>
+              <div class="module-item">Relevamiento con referente Aapresid</div>
+              <div class="module-item">Análisis y definición de requerimientos</div>
+              <div class="module-item">Diseño UX/UI del módulo</div>
+              <div class="module-item">Desarrollo e integración</div>
+              <div class="module-item">Testing UAT → Release LIVE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 09 INTEGRACIONES -->
+    <div class="slide" data-label="Integraciones">
+      <div class="stagger wide">
+        <div class="eyebrow">Ecosistema tecnológico</div>
+        <h2><em>Integraciones</em> externas</h2>
+        <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
+          <div>
+            <p class="body" style="margin-bottom:12px;max-width:400px">Gestión de relaciones con actores externos:
+              <strong>Tomás Coyos (Aapresid)</strong>. Soporte técnico: ecloud.</p>
+            <div class="milestone">
+              <div class="ms-dot blue"></div>
+              <div class="ms-content">
+                <div class="ms-date">Integración</div>
+                <div class="ms-title">Albor</div>
+                <div class="ms-desc">Sistema de gestión. Sincronización de datos operativos.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot blue"></div>
+              <div class="ms-content">
+                <div class="ms-date">Integración</div>
+                <div class="ms-title">RindePlus</div>
+                <div class="ms-desc">Análisis de rindes. API de datos de campañas.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot blue"></div>
+              <div class="ms-content">
+                <div class="ms-date">Integración</div>
+                <div class="ms-title">Puma</div>
+                <div class="ms-desc">Alcance a definir con Aapresid.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="box blue" style="margin-bottom:10px">
+              <div
+                style="font-family:'DM Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+                API — Webservice</div>
+              <div style="font-size:clamp(12px,1.2vw,15px);font-weight:600;color:var(--ink);margin-bottom:4px">Capa de
+                integración central</div>
+              <p class="body">API documentada bajo estándar ENVAA. Actores externos consumen y envían datos de forma
+                estandarizada. Gobierno técnico: ecloud.</p>
+            </div>
+            <div class="box">
+              <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:7px">Proceso de integración
+              </div>
+              <div class="milestone" style="padding:6px 0">
+                <div class="ms-dot" style="width:8px;height:8px"></div>
+                <div class="ms-content">
+                  <div class="ms-title" style="font-size:12px">1. Levantamiento de APIs</div>
+                  <div class="ms-desc">Auditoría técnica de lo que cada actor expone.</div>
+                </div>
+              </div>
+              <div class="milestone" style="padding:6px 0">
+                <div class="ms-dot" style="width:8px;height:8px"></div>
+                <div class="ms-content">
+                  <div class="ms-title" style="font-size:12px">2. Mapeo ENVAA</div>
+                  <div class="ms-desc">Alinear nomenclatura al estándar nacional.</div>
+                </div>
+              </div>
+              <div class="milestone" style="padding:6px 0">
+                <div class="ms-dot" style="width:8px;height:8px"></div>
+                <div class="ms-content">
+                  <div class="ms-title" style="font-size:12px">3. Desarrollo del conector</div>
+                  <div class="ms-desc">Implementación técnica del puente de datos.</div>
+                </div>
+              </div>
+              <div class="milestone" style="padding:6px 0;border-bottom:none">
+                <div class="ms-dot" style="width:8px;height:8px"></div>
+                <div class="ms-content">
+                  <div class="ms-title" style="font-size:12px">4. Validación UAT → LIVE</div>
+                  <div class="ms-desc">Prueba con datos reales antes de producción.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 HITOS -->
+    <div class="slide slide-alt" data-label="Hitos Públicos">
+      <div class="stagger wide">
+        <div class="eyebrow">Demos y presentaciones</div>
+        <h2>Hitos <em>Públicos</em></h2>
+        <p class="body" style="margin-bottom:clamp(8px,1.5vh,16px);max-width:540px">Cuatro instancias de demostración
+          pública. Cada una requiere versión estable en el entorno correspondiente.</p>
+        <div class="four-col">
+          <div class="box green">
+            <div
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">
+              Hito 01</div>
+            <div
+              style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">
+              Piloto Campillo</div>
+            <p class="body" style="margin-bottom:7px">Piloto cerrado con productores reales. Validación del flujo
+              completo.</p>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag green">UAT</span><span
+                class="tag">v0.5</span></div>
+            <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">FT + FV</div>
+          </div>
+          <div class="box amber">
+            <div
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">
+              Hito 02</div>
+            <div
+              style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">
+              EAR</div>
+            <p class="body" style="margin-bottom:7px">Presentación ante ATRs. Demo del panel ATR y flujo productor-ATR.
+            </p>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag amber">LIVE</span><span
+                class="tag">v1.0</span></div>
+            <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Gaspar + TC
+            </div>
+          </div>
+          <div class="box blue">
+            <div
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">
+              Hito 03</div>
+            <div
+              style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">
+              Webinar × Regional</div>
+            <p class="body" style="margin-bottom:7px">Serie de webinares por regional. Funcionalidades a productores.
+            </p>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag blue">LIVE</span><span
+                class="tag">v1.0–1.5</span></div>
+            <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">TC + FV</div>
+          </div>
+          <div class="box" style="border-left:3px solid var(--ink)">
+            <div
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px">
+              Hito 04</div>
+            <div
+              style="font-size:clamp(13px,1.4vw,17px);font-family:'Fraunces',serif;font-weight:700;color:var(--ink);margin-bottom:4px">
+              Congreso Aapresid</div>
+            <p class="body" style="margin-bottom:7px">Presentación principal. Versión con integraciones externas
+              activas.</p>
+            <div style="display:flex;gap:5px;flex-wrap:wrap"><span class="tag green">LIVE</span><span
+                class="tag">v1.5</span></div>
+            <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4)">Gaspar + TC
+            </div>
+          </div>
+        </div>
+        <div class="box" style="margin-top:10px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <div style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+          <p class="body"><strong style="color:var(--ink)">Congelamiento de versión 7 días antes</strong> de cada hito
+            para QA y preparación de demo. Fechas a confirmar por Aapresid.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 PRÓXIMOS PASOS -->
+    <div class="slide" data-label="Próximos pasos">
+      <div class="stagger wide">
+        <div class="eyebrow">Arranque del proyecto</div>
+        <h2>Próximos <em>pasos</em></h2>
+        <div class="two-col" style="margin-top:clamp(8px,1.5vh,18px)">
+          <div>
+            <h3 style="font-size:13px;margin-bottom:10px">Acciones inmediatas</h3>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Semana 1</div>
+                <div class="ms-title">Kickoff operativo</div>
+                <div class="ms-desc">Reunión de arranque entre FT, TC y referentes de cada programa. Alineación de
+                  expectativas y metodología.</div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Semana 1–2</div>
+                <div class="ms-title">Relevamiento por programa</div>
+                <div class="ms-desc">Reuniones 1:1 entre líder técnico ecloud y referente Aapresid por cada programa.
+                </div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot amber"></div>
+              <div class="ms-content">
+                <div class="ms-date">Semana 2</div>
+                <div class="ms-title">Definición de backlog v0.5</div>
+                <div class="ms-desc">FV define el backlog priorizado para el Piloto Campillo. Validación con Gaspar.
+                </div>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="ms-dot amber"></div>
+              <div class="ms-content">
+                <div class="ms-date">Semana 3</div>
+                <div class="ms-title">Setup de entornos</div>
+                <div class="ms-desc">Configuración de DEV, UAT y LIVE. Pipeline CI/CD. Primeros datos de prueba.</div>
+              </div>
+            </div>
+            <div class="milestone" style="border-bottom:none">
+              <div class="ms-dot"></div>
+              <div class="ms-content">
+                <div class="ms-date">Continuo</div>
+                <div class="ms-title">Ciclo semanal de entregables</div>
+                <div class="ms-desc">Un entregable funcional por semana. Status a Aapresid cada dos semanas.</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="box green" style="margin-bottom:10px">
+              <div
+                style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px">
+                Pendientes de confirmación</div>
+              <div class="module-item">Calendario de Webinares por Regional</div>
+              <div class="module-item">Referentes Aapresid para Carbono y CaminoAR</div>
+              <div class="module-item">Líderes técnicos ecloud por programa (REM, Carbono, ASC)</div>
+              <div class="module-item">Alcance definitivo integración SRA</div>
+            </div>
+            <div class="box" style="padding:14px 16px">
+              <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:7px">Contacto de referencia
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:1px">Tomás Coyos</div>
+              <div style="font-size:11px;color:var(--ink3)">Coordinación general — Aapresid</div>
+              <div class="rule" style="margin:8px 0"></div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:1px">Gaspar Mac</div>
+              <div style="font-size:11px;color:var(--ink3)">Líder de Innovación & TD — ecloud</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 TIMELINE -->
+    <div class="slide slide-alt" data-label="Timeline">
+      <div class="stagger wide">
+        <div class="eyebrow">Roadmap temporal</div>
+        <h2>Timeline del <em>Proyecto</em></h2>
+        <div id="timeline-svg" style="width:100%;margin-top:clamp(6px,1.2vh,14px)"></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;align-items:center">
+          <div style="display:flex;align-items:center;gap:5px">
+            <div
+              style="width:14px;height:9px;border-radius:2px;background:#F5E9C8;border:1px solid rgba(139,105,20,.5)">
+            </div><span
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">DEV</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="width:14px;height:9px;border-radius:2px;background:#D0DDF5;border:1px solid rgba(26,58,94,.4)">
+            </div><span
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">UAT</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="width:14px;height:9px;border-radius:2px;background:#C8DDB0;border:1px solid rgba(42,94,58,.5)">
+            </div><span
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">LIVE</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <div style="width:14px;height:9px;border-radius:2px;background:#EDE9DF;border:1px solid rgba(26,26,18,.2)">
+            </div><span
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">Relevamiento</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin-left:4px"><svg width="10" height="10"
+              viewBox="0 0 10 10">
+              <polygon points="5,0 10,5 5,10 0,5" fill="#1A1A12" opacity=".6" />
+            </svg><span
+              style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink4);letter-spacing:.06em">Hito</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 CIERRE -->
+    <div class="slide slide-cover" data-label="Cierre">
+      <div class="stagger" style="position:relative;z-index:2;width:100%;padding-top:clamp(8px,3vh,32px)">
+        <div class="eyebrow">ecloud × Aapresid — 2026</div>
+        <h1>Construyendo<br>el <em>sistema</em><br>del campo</h1>
+        <div class="rule"></div>
+        <p class="lead">Un estándar nacional de datos agronómicos, integrado, inteligente y pensado para los productores
+          argentinos.</p>
+        <div style="margin-top:clamp(14px,2.5vh,28px);display:flex;gap:7px;flex-wrap:wrap">
+          <span class="tag">DataSet</span><span class="tag">CaminoAR</span><span class="tag">ENVAA</span><span
+            class="tag">Integraciones</span>
+        </div>
+        <p
+          style="margin-top:28px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.2);letter-spacing:.1em">
+          DOCUMENTO CONFIDENCIAL — ecloud.agency — ABRIL 2026</p>
+      </div>
+    </div>
+
+  </div><!-- /deck -->
+
+  <script>
+    // ── Supabase Auth ──────────────────────────────────────────────
+    const SUPA_URL = 'https://mlexxszeggmddrasggxe.supabase.co';
+    const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sZXh4c3plZ2dtZGRyYXNnZ3hlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDY3NjYsImV4cCI6MjA5MjI4Mjc2Nn0.aBg3Zuz0V7uSeU7CN3AgpCRNR0pHe8dYnhHvoDJhTMs';
+    const supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+    const loginScreen = document.getElementById('login-screen');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    function showApp() {
+      loginScreen.classList.add('hidden');
+      logoutBtn.style.display = 'block';
+    }
+    function showLogin() {
+      loginScreen.classList.remove('hidden');
+      logoutBtn.style.display = 'none';
+    }
+
+    // Verificar sesión al cargar
+    supa.auth.getSession().then(({ data: { session } }) => {
+      if (session) showApp(); else showLogin();
+    });
+
+    // Escuchar cambios de sesión
+    supa.auth.onAuthStateChange((_event, session) => {
+      if (session) showApp(); else showLogin();
+    });
+
+    async function handleLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('login-btn');
+      const errorEl = document.getElementById('login-error');
+
+      errorEl.classList.remove('show');
+      btn.disabled = true;
+      btn.textContent = 'Ingresando…';
+
+      const { error } = await supa.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorEl.textContent = error.message === 'Invalid login credentials'
+          ? 'Email o contraseña incorrectos.'
+          : error.message;
+        errorEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Ingresar →';
+      }
+    }
+
+    async function handleLogout() {
+      await supa.auth.signOut();
+    }
+
+    // Enter key en el form
+    document.getElementById('login-password').addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleLogin();
+    });
+    document.getElementById('login-email').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('login-password').focus();
+    });
+    // ──────────────────────────────────────────────────────────────
+
+    const slides = document.querySelectorAll('.slide');
+    const dotsEl = document.getElementById('dots');
+    const navCount = document.getElementById('navCount');
+    const progress = document.getElementById('progress');
+    const topLabel = document.getElementById('topLabel');
+    let current = 0;
+    const total = slides.length;
+
+    slides.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goTo(i);
+      dotsEl.appendChild(d);
+    });
+
+    function updateUI() {
+      dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+      navCount.textContent = String(current + 1).padStart(2, '0') + '/' + String(total).padStart(2, '0');
+      progress.style.width = ((current + 1) / total * 100) + '%';
+      topLabel.textContent = slides[current].dataset.label || '';
+    }
+    function goTo(n) {
+      if (n === current) return;
+      const prev = slides[current];
+      prev.classList.add('exit'); prev.classList.remove('active');
+      setTimeout(() => prev.classList.remove('exit'), 400);
+      current = Math.max(0, Math.min(total - 1, n));
+      slides[current].classList.add('active');
+      updateUI();
+    }
+    function navigate(dir) { goTo(current + dir); }
+
+    document.addEventListener('keydown', e => {
+      if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); navigate(1); }
+      if (['ArrowLeft', 'ArrowUp'].includes(e.key)) { e.preventDefault(); navigate(-1); }
+    });
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 40) navigate(dx < 0 ? 1 : -1);
+    });
+
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx + 'px'; cursor.style.top = my + 'px'; });
+    (function anim() { rx += (mx - rx) * .1; ry += (my - ry) * .1; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(anim); })();
+
+    updateUI();
+
+    // ── Timeline Chart ───────────────────────────────────────────
+    function drawTimeline() {
+      const el = document.getElementById('timeline-svg');
+      if (!el) return;
+      const W = 760, H = 200, padL = 76, padR = 8, padT = 26, padB = 54;
+      const cW = W - padL - padR;
+
+      // Acotado exactamente a los milestones del Linear: Apr 14 → May 20
+      const start = new Date(2026, 3, 14), end = new Date(2026, 4, 20);
+      const span = end - start;
+      function xd(d) { return padL + ((d - start) / span) * cW; }
+
+      // Semanas como eje X
+      const weeks = [
+        [3, 14, '14 Abr'], [3, 21, '21 Abr'], [3, 28, '28 Abr'],
+        [4, 5, '5 May'], [4, 12, '12 May'], [4, 19, '19 May'],
+      ];
+
+      // Solo DataSet — una fase por milestone para consistencia con el Linear
+      const tracks = [
+        {
+          lbl: 'DataSet', phases: [
+            { s: new Date(2026, 3, 14), e: new Date(2026, 3, 17), bg: '#C8DDB0', bc: 'rgba(42,94,58,.5)', tx: 'Recibir data ✓' }, // 100% done
+            { s: new Date(2026, 3, 17), e: new Date(2026, 3, 24), bg: '#F5E9C8', bc: 'rgba(139,105,20,.5)', tx: 'Carga de datos' }, // en curso
+            { s: new Date(2026, 3, 24), e: new Date(2026, 3, 30), bg: '#EDE9DF', bc: 'rgba(26,26,18,.2)', tx: 'Análisis' },       // pendiente
+            { s: new Date(2026, 3, 30), e: new Date(2026, 4, 8), bg: '#EDE9DF', bc: 'rgba(26,26,18,.15)', tx: 'Datos cruzados' },
+            { s: new Date(2026, 4, 8), e: new Date(2026, 4, 11), bg: '#EDE9DF', bc: 'rgba(26,26,18,.15)', tx: 'Prueba' },
+            { s: new Date(2026, 4, 11), e: new Date(2026, 4, 20), bg: '#D0DDF5', bc: 'rgba(26,58,94,.35)', tx: 'Evento EAR' },
+          ]
+        },
+      ];
+
+      // Milestones centrados bajo cada fase del track DataSet
+      // Centro de cada barra = (inicio + fin) / 2
+      const milestones = [
+        { d: new Date(2026, 3, 15), lbl: 'Recibir data Aapresid', date: 'Apr 17', c: '#2A5E3A', done: true }, // centro Apr 14–17
+        { d: new Date(2026, 3, 20), lbl: 'Carga de datos', date: 'Apr 24', c: '#8B6914', done: false }, // centro Apr 17–24
+        { d: new Date(2026, 3, 27), lbl: 'Análisis campaña self-service', date: 'Apr 30', c: '#8B6914', done: false }, // centro Apr 24–30
+        { d: new Date(2026, 4, 4), lbl: 'Consulta de datos cruzados', date: 'May 8', c: '#1A3A5E', done: false }, // centro Apr 30–May 8
+        { d: new Date(2026, 4, 9), lbl: 'Prueba Aapresid interna', date: 'May 11', c: '#1A3A5E', done: false }, // centro May 8–11
+        { d: new Date(2026, 4, 15), lbl: 'Evento Aapresid EAR', date: 'May 15', c: '#2A5E3A', done: false }, // centro May 11–20
+      ];
+
+      const tH = 26, tGap = 7;
+      const msY = padT + tracks.length * (tH + tGap) + 12;
+
+      let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">`;
+
+      // Grid semanal
+      weeks.forEach(([mo, dy, nm]) => {
+        const x = xd(new Date(2026, mo, dy));
+        s += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${msY + 6}" stroke="rgba(26,26,18,.07)" stroke-width="1"/>`;
+        s += `<text x="${x + 3}" y="${padT - 4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.3)" letter-spacing=".04em">${nm}</text>`;
+      });
+
+      // Tracks
+      tracks.forEach((tr, ti) => {
+        const y = padT + ti * (tH + tGap);
+        s += `<text x="${padL - 6}" y="${y + tH / 2 + 4}" font-family="'DM Mono',monospace" font-size="9" fill="rgba(26,26,18,.45)" text-anchor="end" letter-spacing=".04em">${tr.lbl}</text>`;
+        s += `<rect x="${padL}" y="${y}" width="${cW}" height="${tH}" rx="3" fill="rgba(26,26,18,.03)"/>`;
+        tr.phases.forEach(ph => {
+          const x1 = xd(ph.s), x2 = xd(ph.e), pw = Math.max(x2 - x1, 2);
+          s += `<rect x="${x1}" y="${y + 1}" width="${pw}" height="${tH - 2}" rx="3" fill="${ph.bg}" stroke="${ph.bc}" stroke-width=".8"/>`;
+          // Sin texto dentro de las barras — la descripción va abajo en los diamantes
+        });
+      });
+
+      // Hoy line (Apr 20)
+      const todayX = xd(new Date(2026, 3, 20));
+      s += `<line x1="${todayX}" y1="${padT}" x2="${todayX}" y2="${msY + 6}" stroke="#2A5E3A" stroke-width="1.5" stroke-dasharray="3,2" opacity=".55"/>`;
+      s += `<text x="${todayX + 3}" y="${padT - 4}" font-family="'DM Mono',monospace" font-size="8" fill="#2A5E3A" opacity=".8">Hoy</text>`;
+
+      // 6 Milestones — 2 filas alternadas debajo de los diamantes
+      milestones.forEach((ms, mi) => {
+        const x = xd(ms.d);
+        const op = ms.done ? '1' : '.75';
+        const row = mi % 2; // fila 0 = más cerca, fila 1 = más abajo
+        const lblY = msY + 17 + row * 14;
+
+        if (ms.done) {
+          s += `<polygon points="${x},${msY - 6} ${x + 6},${msY} ${x},${msY + 6} ${x - 6},${msY}" fill="${ms.c}"/>`;
+        } else {
+          s += `<polygon points="${x},${msY - 5} ${x + 5},${msY} ${x},${msY + 5} ${x - 5},${msY}" fill="none" stroke="${ms.c}" stroke-width="1.5" opacity="${op}"/>`;
+        }
+        s += `<line x1="${x}" y1="${msY + 6}" x2="${x}" y2="${lblY - 5}" stroke="${ms.c}" stroke-width=".7" opacity="${op}" stroke-dasharray="2,1"/>`;
+        s += `<text x="${x}" y="${lblY}" font-family="'DM Mono',monospace" font-size="8.5" fill="${ms.c}" text-anchor="middle" opacity="${op}">${ms.lbl}</text>`;
+        s += `<text x="${x}" y="${lblY + 10}" font-family="'DM Mono',monospace" font-size="7.5" fill="${ms.c}" text-anchor="middle" opacity="${+op * .7}">${ms.date}</text>`;
+      });
+
+      s += '</svg>';
+      el.innerHTML = s;
+    }
+
+    drawTimeline();
+  </script>
 </body>
+
 </html>
